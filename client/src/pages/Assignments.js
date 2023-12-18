@@ -95,7 +95,7 @@ function AssignmentsPage() {
         <main>
           <section className="canvas-assignments">
             <h2>Canvas Assignments:</h2>
-            <PopupComponent />
+            {/* <PopupComponent /> */}
           </section>
           <section className="canvas-assignments">
             {updatedEvents.length > 0 && (
@@ -119,6 +119,7 @@ function AssignmentsPage() {
                   dateTime={event.dueDate}
                   difficulty={event.difficulty}
                   type={event.type}
+                  reminders={event.reminders}
                   onUpdateDifficultyAndType={onUpdateDifficultyAndType} // Pass update functions as props
                   className="event"
                 />

@@ -1,5 +1,24 @@
 const Assignment = require("../db/models/assignment");
 
+// add a reminder to an assignment by ID
+const addReminderById = async (req, res) => {
+  const id = req.params.id;
+  const { reminder } = req.body;
+  try {
+    const updatedAssignment = await Assignment.findByIdAndUpdate(
+      id,
+      { $push: { reminders: reminder } },
+      { new: true }
+    );
+    if (!updatedAssignment) {
+      console.error("Assignment not found");
+    }
+    res.status(200).json(updatedAssignment);
+  } catch (error) {
+    res.status(400).json(error);
+  }
+};
+
 // Complete an assignment by ID
 const completeAssignmentById = async (req, res) => {
   const id = req.params.id;
@@ -93,4 +112,5 @@ module.exports = {
   changeDifficultyById,
   changeTypeById,
   changeTypeAndDifficultyById,
+  addReminderById,
 };

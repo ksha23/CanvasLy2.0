@@ -18,5 +18,6 @@ router.put(
   "/typeAndDifficulty/:id",
   assignmentController.changeTypeAndDifficultyById
 );
+router.put("/reminder/:id", assignmentController.addReminderById);
 
 module.exports = router;

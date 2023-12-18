@@ -2,6 +2,22 @@ import React from "react";
 import "./Event.css";
 import { useState, useEffect } from "react";
 
+const addReminder = async (id, reminder) => {
+  const response = await fetch(
+    `http://localhost:4000/api/v1/assignments/reminder/${id}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ reminder: reminder }),
+    }
+  );
+  const data = await response.json();
+  window.location.reload();
+  return data;
+};
+
 const completeAssignment = async (id) => {
   const response = await fetch(
     `http://localhost:4000/api/v1/assignments/complete/${id}`,
@@ -54,6 +70,7 @@ const EventComponent = ({
   dateTime,
   difficulty,
   type,
+  reminders,
   onUpdateDifficultyAndType,
 }) => {
   const formattedDateTime = new Date(dateTime);
@@ -118,6 +135,7 @@ const EventComponent = ({
   const [theType, setType] = useState("");
   const [theDifficulty, setDifficulty] = useState("");
   const [edited, setEdited] = useState(false);
+  const [reminder, setReminder] = useState("");
 
   useEffect(() => {
     setOriginalType(type);
@@ -131,67 +149,100 @@ const EventComponent = ({
 
   return (
     <div className={edited ? "edited-container" : "event-container"}>
-      <h3 className="event-title">
-        {displayName}
-        <span className="event-name">{name.replace(/\[.*?\]/, "")}</span>
-      </h3>
-      <p className="due-date">
-        <strong>Due Date: </strong>
-        {formatDate(formattedDateTime)} | <strong>Difficulty: </strong>
-        {difficulty} | <strong>Type: </strong>
-        {type}
-      </p>
-      <button
-        className="complete-assignment-btn"
-        onClick={() => completeAssignment(id)}
-      >
-        Complete Assignment
-      </button>
-      <select
-        onChange={(e) => {
-          handleEdited(id, e.target.value, theType);
-        }}
-        value={theDifficulty}
-      >
-        <option value="1">Difficulty 1</option>
-        <option value="2">Difficulty 2</option>
-        <option value="3">Difficulty 3</option>
-        <option value="4">Difficulty 4</option>
-        <option value="5">Difficulty 5</option>
-      </select>
-      <select
-        onChange={(e) => {
-          handleEdited(id, theDifficulty, e.target.value);
-        }}
-        value={theType}
-      >
-        <option value="Assignment">Assignment</option>
-        <option value="Quiz">Quiz</option>
-        <option value="Exam">Exam</option>
-        <option value="Project">Project</option>
-        <option value="Other">Other</option>
-      </select>
-      {edited && (
+      <div className="event-banner">
+        {" "}
+        <h3 className="event-title">
+          {displayName}
+          <span className="event-name">
+            {": " + name.replace(/\[.*?\]/, "")}
+          </span>
+        </h3>
+      </div>
+
+      <div className="event-details">
+        <p className="due-date">
+          <strong>Due Date: </strong>
+          {formatDate(formattedDateTime)} | <strong>Difficulty: </strong>
+          {difficulty} | <strong>Type: </strong>
+          {type}
+        </p>
         <button
-          type="submit"
-          onClick={() =>
-            updateAssignment(
-              id,
-              originalDifficulty,
-              originalType,
-              theDifficulty,
-              theType
-            )
-          }
+          className="complete-assignment-btn"
+          onClick={() => completeAssignment(id)}
         >
-          Update
+          Complete Assignment
         </button>
-      )}
-      {edited && (
-        <button className="undo-changes-btn" onClick={() => undoAllChanges()}>
-          Undo Changes
+        <select
+          onChange={(e) => {
+            handleEdited(id, e.target.value, theType);
+          }}
+          value={theDifficulty}
+        >
+          <option value="1">Difficulty 1</option>
+          <option value="2">Difficulty 2</option>
+          <option value="3">Difficulty 3</option>
+          <option value="4">Difficulty 4</option>
+          <option value="5">Difficulty 5</option>
+        </select>
+        <select
+          onChange={(e) => {
+            handleEdited(id, theDifficulty, e.target.value);
+          }}
+          value={theType}
+        >
+          <option value="Assignment">Assignment</option>
+          <option value="Quiz">Quiz</option>
+          <option value="Exam">Exam</option>
+          <option value="Project">Project</option>
+          <option value="Other">Other</option>
+        </select>
+        {edited && (
+          <button
+            type="submit"
+            onClick={() =>
+              updateAssignment(
+                id,
+                originalDifficulty,
+                originalType,
+                theDifficulty,
+                theType
+              )
+            }
+          >
+            Update
+          </button>
+        )}
+        {edited && (
+          <button className="undo-changes-btn" onClick={() => undoAllChanges()}>
+            Undo Changes
+          </button>
+        )}
+        {reminders && reminders.length > 0 && (
+          <p>
+            <strong>Reminders: </strong>
+          </p>
+        )}
+        {reminders && (
+          <ul>
+            {reminders.map((reminder, index) => (
+              <li key={index}>{reminder}</li>
+            ))}
+          </ul>
+        )}{" "}
+        <input
+          type="text"
+          placeholder="Add Reminder"
+          onChange={(e) => {
+            setReminder(e.target.value);
+          }}
+        />
+        <button
+          className="add-reminder-btn"
+          onClick={() => addReminder(id, reminder)}
+        >
+          Add Reminder
         </button>
-      )}
+      </div>
     </div>
   );
 };

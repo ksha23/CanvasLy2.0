@@ -35,15 +35,13 @@
 /* Sample CSS for the event container */
 .event-container {
   border: 1px solid #ccc;
-  padding: 20px;
   margin-top: 20px;
   border-radius: 8px;
   background-color: #f9f9f9;
 }
 
 .edited-container {
-  border: 1px solid #ccc;
-  padding: 20px;
+  border: 2px solid #ccc;
   margin-top: 20px;
   border-radius: 8px;
   border-color: red;
@@ -52,11 +50,12 @@
 
 .event-title {
   margin:0px;
-  font-size: 1.5rem;
+  font-size: 20px;
 }
 
 .event-name {
   font-weight:bold;
+  font-size:20px;
 }
 
 .due-date {
@@ -71,14 +70,6 @@ button {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-}
-
-button {
-  background-color: blue;
-}
-
-button:hover {
-  background-color: #0056b3;
 }
 
 select {
@@ -116,3 +107,16 @@ button[type="submit"]:hover {
   color: white;
 }
 
+.event-banner {
+  background-color: rgb(68, 132, 184);
+  color: white;
+  padding:20px 20px 20px 20px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  margin:0px;
+}
+
+.event-details {
+  padding:0px 0px 20px 20px;
+  margin: 0px;
+}
