@@ -14,5 +14,9 @@ const assignmentController = require("../controllers/assignmentController");
 router.put("/complete/:id", assignmentController.completeAssignmentById);
 router.put("/difficulty/:id", assignmentController.changeDifficultyById);
 router.put("/type/:id", assignmentController.changeTypeById);
+router.put(
+  "/typeAndDifficulty/:id",
+  assignmentController.changeTypeAndDifficultyById
+);
 
 module.exports = router;

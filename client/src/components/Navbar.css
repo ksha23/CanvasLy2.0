@@ -7,7 +7,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px;
-    background-color: #ffffff;
+    background-color: #e40000;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
   
@@ -18,13 +18,20 @@
   }
   
   .right-section {
+    background-color: white;
+    border-radius: 5px;
     display: flex;
     align-items: center;
+    padding: 10px 10px;
+    margin-right:30px;
   }
   
   .logo {
     width: 200px;
-    height: auto;
+    height: 70px;
+    object-fit: cover;
+    margin: 0px;
+    padding: 0px;
   }
   
   .user-profile {
@@ -40,6 +47,8 @@
   }
 
   .google-image {
+    margin: 0px;
+    padding: 0px;
     width: 200px;
     height: 44px;
   }
@@ -48,11 +57,7 @@
     margin: 0;
     font-size: 16px;
     font-weight: bold;
-    color: #333333;
-  }
-  
-  .buttons button {
-    margin: 0 30px;
+    color: black;
   }
 
   .buttons {
@@ -62,16 +67,18 @@
   
   .login-btn {
     background-color: white;
+    margin: 0px;
+    padding: 0px;
     border: none;
     cursor: pointer;
     font-weight: bold
   }
 
   .logout-btn {
+    margin-left: 20px;
     background-color: red;
     color: white;
     border: none;
-    padding: 10px;
     cursor: pointer;
     border-radius: 5px;
   }

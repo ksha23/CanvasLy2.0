@@ -8,12 +8,8 @@ const logger = require("morgan");
 const cors = require("cors");
 const { connect } = require("mongoose");
 const passport = require("passport");
-// const googleConfig = require("./config");
-
-// const User = require("./db/models/user");
 
 const authRouter = require("./routes/auth");
-// const usersRouter = require("./routes/usersRouter");
 const calendarRouter = require("./routes/calendarRouter");
 const assignmentRouter = require("./routes/assignmentRouter");
 
@@ -30,6 +26,8 @@ app.use(
   cors({
     origin: `${process.env.OUR_REACT}`,
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"], // Add the necessary methods
+    allowedHeaders: ["Content-Type", "Authorization"], // Add required headers
   })
 );
 

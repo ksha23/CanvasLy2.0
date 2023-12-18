@@ -32,7 +32,7 @@ async function getUserData() {
 const Navbar = () => {
   const [name, setName] = useState("");
   const [image, setImage] = useState("");
-  const [isLogged, setIsLogged] = useState(false);
+  const [isLoggedIn, setIsLogged] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -67,7 +67,7 @@ const Navbar = () => {
           <h2 className="profile-name">{name}</h2>
         </div>
         <div className="buttons">
-          {!isLogged && (
+          {!isLoggedIn && (
             <button className="login-btn" onClick={() => auth()}>
               <img
                 className="google-image"
@@ -76,8 +76,7 @@ const Navbar = () => {
               />
             </button>
           )}
-
-          {isLogged && (
+          {isLoggedIn && (
             <button className="logout-btn" onClick={() => logout()}>
               <strong>Log Out</strong>
             </button>

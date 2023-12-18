@@ -4,10 +4,10 @@ const mongoose = require("mongoose");
 const calendarSchema = new mongoose.Schema({
   googleId: {
     type: String,
-    unique: true,
   },
   googleCalendarId: {
     type: String,
+    unique: true,
   },
   customCalendarId: {
     type: String,

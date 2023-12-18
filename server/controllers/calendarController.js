@@ -59,9 +59,11 @@ function customSort(a, b) {
 // ----------------- HELPERS --------------------
 
 // create calendar if one with the same calendarId doesn't exist
-const createCalendar = async (googleId, data) => {
+const createCalendar = async (data) => {
   try {
-    const calendar = await Calendar.findOne({ googleId: googleId });
+    const calendar = await Calendar.findOne({
+      googleCalendarId: data.googleCalendarId,
+    });
     if (!calendar) {
       const newCalendar = await Calendar.create(data);
       return newCalendar;
@@ -73,21 +75,26 @@ const createCalendar = async (googleId, data) => {
   }
 };
 
-// create many assignments and associate them with a calendar
 const createAssignments = async (calendarId, data) => {
   try {
-    // only create assignments that don't already exist
+    // Extract names from incoming data for comparison
+    const assignmentNames = data.map((assignment) => assignment.name);
+
+    // Find existing assignments by name
     const existingAssignments = await Assignment.find({
-      name: { $in: data.map((assignment) => assignment.name) },
+      name: { $in: assignmentNames },
     });
+
+    // Filter out existing assignments
     const existingAssignmentNames = existingAssignments.map(
       (assignment) => assignment.name
     );
-    data = data.filter(
+    const newAssignmentsData = data.filter(
       (assignment) => !existingAssignmentNames.includes(assignment.name)
     );
 
-    const newAssignments = await Assignment.insertMany(data);
+    // Insert new assignments (if any)
+    const newAssignments = await Assignment.insertMany(newAssignmentsData);
 
     if (calendarId) {
       const calendar = await Calendar.findOne({ googleCalendarId: calendarId });
@@ -95,8 +102,9 @@ const createAssignments = async (calendarId, data) => {
         return { message: "Calendar not found" };
       }
 
-      // Extract only the IDs of newly created assignments
+      // Extract IDs of newly created assignments
       const assignmentIds = newAssignments.map((assignment) => assignment._id);
+
       // Add valid assignmentIds to the calendar's assignments field
       calendar.assignments.push(...assignmentIds);
 
@@ -108,6 +116,42 @@ const createAssignments = async (calendarId, data) => {
     console.error(error);
   }
 };
+
+//create many assignments and associate them with a calendar
+// const createAssignments = async (calendarId, data) => {
+//   try {
+//     // only create assignments that don't already exist
+//     const existingAssignments = await Assignment.find({
+//       name: { $in: data.map((assignment) => assignment.name) },
+//     });
+//     const existingAssignmentNames = existingAssignments.map(
+//       (assignment) => assignment.name
+//     );
+//     data = data.filter(
+//       (assignment) => !existingAssignmentNames.includes(assignment.name)
+//     );
+
+//     const newAssignments = await Assignment.insertMany(data);
+
+//     if (calendarId) {
+//       const calendar = await Calendar.findOne({ googleCalendarId: calendarId });
+//       if (!calendar) {
+//         return { message: "Calendar not found" };
+//       }
+
+//       // Extract only the IDs of newly created assignments
+//       const assignmentIds = newAssignments.map((assignment) => assignment._id);
+//       // Add valid assignmentIds to the calendar's assignments field
+//       calendar.assignments.push(...assignmentIds);
+
+//       await calendar.save();
+//     }
+
+//     return newAssignments;
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
 
 // Get assignments belonging to a specific calendar
 const getAssignmentsByCalendarId = async (calendarId) => {
@@ -142,7 +186,7 @@ const postProcess = async (data, googleId) => {
     assignments: [],
   };
 
-  await createCalendar(googleId, calendarData);
+  await createCalendar(calendarData);
 
   const newData = data.map((event) => ({
     name: event.summary,
@@ -176,14 +220,10 @@ const postProcess = async (data, googleId) => {
 // Get events from Google Calendar API
 const getEventsFromGoogle = async (req, res) => {
   const today = new Date(); // Get today's date
-  // const sevenMonthsAgo = new Date(
-  //   today.getFullYear(),
-  //   today.getMonth() - 7,
-  //   today.getDate()
-  // ).toISOString(); // Get ISO string of date seven months ago
-
   const response = await fetch(
-    `https://www.googleapis.com/calendar/v3/calendars/${process.env.GOOGLE_CALENDAR_ID}/events?timeMin=${today}&maxResults=30`,
+    `https://www.googleapis.com/calendar/v3/calendars/${
+      process.env.GOOGLE_CALENDAR_ID
+    }/events?timeMin=${today.toISOString()}&maxResults=30`,
     {
       headers: {
         Authorization: `Bearer ${req.user.accessToken}`,
@@ -251,7 +291,6 @@ const getEvents = async (req, res) => {
       );
     }
   } catch (error) {
-    console.log("HERE!1");
     return res.status(400).json([]);
   }
   return res.status(400).json([]);

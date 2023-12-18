@@ -2,12 +2,6 @@ import React from "react";
 import "./Event.css";
 import { useState, useEffect } from "react";
 
-const updateAssignment = async (id, difficulty, type) => {
-  await changeAssignmentDifficulty(id, difficulty);
-  await changeAssignmentType(id, type);
-  window.location.reload();
-};
-
 const completeAssignment = async (id) => {
   const response = await fetch(
     `http://localhost:4000/api/v1/assignments/complete/${id}`,
@@ -54,7 +48,14 @@ const changeAssignmentType = async (id, type) => {
   return data;
 };
 
-const EventComponent = ({ id, name, dateTime, difficulty, type }) => {
+const EventComponent = ({
+  id,
+  name,
+  dateTime,
+  difficulty,
+  type,
+  onUpdateDifficultyAndType,
+}) => {
   const formattedDateTime = new Date(dateTime);
 
   const extractContentInBrackets = (str) => {
@@ -73,19 +74,63 @@ const EventComponent = ({ id, name, dateTime, difficulty, type }) => {
     }
   };
 
+  const updateAssignment = async (
+    id,
+    originalDifficulty,
+    originalType,
+    difficulty,
+    type
+  ) => {
+    if (originalDifficulty != difficulty && originalType != type) {
+      await changeAssignmentDifficulty(id, difficulty);
+      await changeAssignmentType(id, type);
+      window.location.reload();
+    } else if (originalDifficulty != difficulty) {
+      await changeAssignmentDifficulty(id, difficulty);
+      window.location.reload();
+    } else if (originalType != type) {
+      await changeAssignmentType(id, type);
+      window.location.reload();
+    }
+  };
+
+  const handleEdited = async (id, difficulty, type) => {
+    if (originalType == type && originalDifficulty == difficulty) {
+      await setEdited(false);
+      onUpdateDifficultyAndType(false, id, difficulty, type);
+    } else {
+      await setEdited(true);
+      onUpdateDifficultyAndType(true, id, difficulty, type);
+    }
+    await setType(type);
+    await setDifficulty(difficulty);
+  };
+
+  const undoAllChanges = async () => {
+    await setEdited(false);
+    await setType(originalType);
+    await setDifficulty(originalDifficulty);
+    onUpdateDifficultyAndType(false, id, originalDifficulty, originalType);
+  };
+
+  const [originalType, setOriginalType] = useState("");
+  const [originalDifficulty, setOriginalDifficulty] = useState("");
   const [theType, setType] = useState("");
   const [theDifficulty, setDifficulty] = useState("");
+  const [edited, setEdited] = useState(false);
 
   useEffect(() => {
+    setOriginalType(type);
+    setOriginalDifficulty(difficulty);
     setType(type);
     setDifficulty(difficulty);
-  }, [type, difficulty]);
+  }, [difficulty, type]);
 
   const extractedContent = extractContentInBrackets(name);
   const displayName = extractedContent ? `${extractedContent} ` : "";
 
   return (
-    <div className="event-container">
+    <div className={edited ? "edited-container" : "event-container"}>
       <h3 className="event-title">
         {displayName}
         <span className="event-name">{name.replace(/\[.*?\]/, "")}</span>
@@ -96,11 +141,16 @@ const EventComponent = ({ id, name, dateTime, difficulty, type }) => {
         {difficulty} | <strong>Type: </strong>
         {type}
       </p>
-      <button onClick={() => completeAssignment(id)}>
+      <button
+        className="complete-assignment-btn"
+        onClick={() => completeAssignment(id)}
+      >
         Complete Assignment
       </button>
       <select
-        onChange={(e) => setDifficulty(e.target.value)}
+        onChange={(e) => {
+          handleEdited(id, e.target.value, theType);
+        }}
         value={theDifficulty}
       >
         <option value="1">Difficulty 1</option>
@@ -109,19 +159,39 @@ const EventComponent = ({ id, name, dateTime, difficulty, type }) => {
         <option value="4">Difficulty 4</option>
         <option value="5">Difficulty 5</option>
       </select>
-      <select onChange={(e) => setType(e.target.value)} value={theType}>
+      <select
+        onChange={(e) => {
+          handleEdited(id, theDifficulty, e.target.value);
+        }}
+        value={theType}
+      >
         <option value="Assignment">Assignment</option>
         <option value="Quiz">Quiz</option>
         <option value="Exam">Exam</option>
         <option value="Project">Project</option>
         <option value="Other">Other</option>
       </select>
-      <button
-        type="submit"
-        onClick={() => updateAssignment(id, theDifficulty, theType)}
-      >
-        Update
-      </button>
+      {edited && (
+        <button
+          type="submit"
+          onClick={() =>
+            updateAssignment(
+              id,
+              originalDifficulty,
+              originalType,
+              theDifficulty,
+              theType
+            )
+          }
+        >
+          Update
+        </button>
+      )}
+      {edited && (
+        <button className="undo-changes-btn" onClick={() => undoAllChanges()}>
+          Undo Changes
+        </button>
+      )}
     </div>
   );
 };

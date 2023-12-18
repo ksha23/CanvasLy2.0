@@ -1,0 +1,118 @@
+/* .event-container {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+}
+
+.event-title {
+  margin-bottom: 5px;
+  font-size: 18px;
+}
+
+.event-name {
+  font-weight: bold;
+}
+
+.due-date {
+  color: #555;
+}
+
+.event-container button {
+  background-color: green;
+  color: white;
+  border-radius:5px;
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.event-container select {
+  border-radius: 5px;
+  padding: 8px;
+  margin-left: 5px;
+} */
+
+/* Sample CSS for the event container */
+.event-container {
+  border: 1px solid #ccc;
+  padding: 20px;
+  margin-top: 20px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.edited-container {
+  border: 1px solid #ccc;
+  padding: 20px;
+  margin-top: 20px;
+  border-radius: 8px;
+  border-color: red;
+  background-color: #f9f9f9;
+}
+
+.event-title {
+  margin:0px;
+  font-size: 1.5rem;
+}
+
+.event-name {
+  font-weight:bold;
+}
+
+.due-date {
+  margin-bottom: 15px;
+}
+
+button {
+  padding: 10px 10px;
+  margin-right: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button {
+  background-color: blue;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+select {
+  padding: 8px;
+  margin-right: 10px;
+}
+
+/* Adjust styles for the update button */
+button[type="submit"] {
+  background-color: #28a745;
+  color:white;
+}
+
+button[type="submit"]:hover {
+  background-color: #218838;
+}
+
+.undo-changes-btn {
+  background-color: #dd2e2e;
+  color: white;
+}
+
+.undo-changes-btn:hover {
+  background-color: #ad2424;
+  color: white;
+}
+
+.complete-assignment-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.complete-assignment-btn:hover {
+  background-color: #218838;
+  color: white;
+}
+

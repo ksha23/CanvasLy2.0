@@ -15,4 +15,16 @@
     margin-right: 10px;
   }
 
+button {
+  cursor: pointer;
+}
+
+.update-all-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.update-all-btn:hover {
+  background-color: #218838;
+}
   
