@@ -196,6 +196,20 @@ const EventComponent = ({
           <option value="Project">Project</option>
           <option value="Other">Other</option>
         </select>
+        <input
+          className="add-reminder-input"
+          type="text"
+          placeholder="Reminder..."
+          onChange={(e) => {
+            setReminder(e.target.value);
+          }}
+        />
+        <button
+          className="add-reminder-btn"
+          onClick={() => addReminder(id, reminder)}
+        >
+          Add Reminder
+        </button>
         {edited && (
           <button
             type="submit"
@@ -218,7 +232,7 @@ const EventComponent = ({
           </button>
         )}
         {reminders && reminders.length > 0 && (
-          <p>
+          <p className="reminder-label">
             <strong>Reminders: </strong>
           </p>
         )}
@@ -229,19 +243,6 @@ const EventComponent = ({
             ))}
           </ul>
         )}{" "}
-        <input
-          type="text"
-          placeholder="Add Reminder"
-          onChange={(e) => {
-            setReminder(e.target.value);
-          }}
-        />
-        <button
-          className="add-reminder-btn"
-          onClick={() => addReminder(id, reminder)}
-        >
-          Add Reminder
-        </button>
       </div>
     </div>
   );

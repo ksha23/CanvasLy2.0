@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import "./Assignments.css";
 import EventComponent from "../components/Event";
-import PopupComponent from "../components/Popup";
+// import PopupComponent from "../components/Popup";
 import Navbar from "../components/Navbar";
+import { useSelector } from "react-redux";
+import ReduxTester from "../components/ReduxTester";
 
 // get the calendar events from the backend
 async function getCalendarEvents() {
@@ -16,6 +18,10 @@ async function getCalendarEvents() {
 
 function AssignmentsPage() {
   const [events, setEvents] = useState([]);
+
+  // redux-testing
+  const assignments = useSelector((state) => state.assignmentsReducer);
+  console.warn("data in assignments page", assignments);
 
   useEffect(() => {
     async function fetchData() {
@@ -91,6 +97,8 @@ function AssignmentsPage() {
   return (
     <>
       <Navbar />
+      <ReduxTester />
+      <p>{assignments.length}</p>
       <div className="assignments-container">
         <main>
           <section className="canvas-assignments">
