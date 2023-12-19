@@ -1,6 +1,6 @@
 import { combineReducers } from "redux";
-import { assignmentsReducer } from "./reducer";
-import { assignmentsListReducer } from "./assignmentListReducer";
+import { assignmentsReducer } from "./reducers/reducer";
+import { assignmentsListReducer } from "./reducers/assignmentListReducer";
 
 export default combineReducers({
   assignmentsReducer,

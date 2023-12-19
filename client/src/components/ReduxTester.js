@@ -1,9 +1,9 @@
 import { useDispatch } from "react-redux";
 import "./ReduxTester.css";
-import { completeAssignment } from "../redux/action";
-import { updateAssignmentType } from "../redux/action";
-import { updateAssignmentDifficulty } from "../redux/action";
-import { listAssignments } from "../redux/assignmentListAction";
+import { completeAssignment } from "../redux/actions/action";
+import { updateAssignmentType } from "../redux/actions/action";
+import { updateAssignmentDifficulty } from "../redux/actions/action";
+import { listAssignments } from "../redux/actions/assignmentListAction";
 import { useSelector } from "react-redux";
 
 function ReduxTester() {
