@@ -162,6 +162,7 @@ const getAssignmentsByCalendarId = async (calendarId) => {
     if (!calendar) {
       console.error("Calendar not found");
     }
+    console.log(calendar.assignments);
     return calendar.assignments;
   } catch (error) {
     console.error(error);
@@ -182,7 +183,7 @@ const postProcess = async (data, googleId) => {
   // create calendar in database if it doesn't exist
   const calendarData = {
     googleId: googleId,
-    googleCalendarId: process.env.GOOGLE_CALENDAR_ID,
+    googleCalendarId: process.env.GOOGLE_CALENDAR_ID2,
     assignments: [],
   };
 
@@ -194,11 +195,11 @@ const postProcess = async (data, googleId) => {
   }));
 
   // save events to database if they don't already exist (also associate them with the calendar)
-  await createAssignments(process.env.GOOGLE_CALENDAR_ID, newData);
+  await createAssignments(process.env.GOOGLE_CALENDAR_ID2, newData);
 
   // ----------------- FILTERS --------------------
   const assignments = await getAssignmentsByCalendarId(
-    process.env.GOOGLE_CALENDAR_ID
+    process.env.GOOGLE_CALENDAR_ID2
   );
 
   // filter out completed assignments
@@ -207,9 +208,6 @@ const postProcess = async (data, googleId) => {
   );
 
   // add any other filters here!!!!!
-
-  // ----------------- SORTING --------------------
-  filteredAssignments.sort(customSort);
 
   // sends back _id, name, dueDate, completed, and reminders array
   return filteredAssignments;
@@ -222,7 +220,7 @@ const getEventsFromGoogle = async (req, res) => {
   const today = new Date(); // Get today's date
   const response = await fetch(
     `https://www.googleapis.com/calendar/v3/calendars/${
-      process.env.GOOGLE_CALENDAR_ID
+      process.env.GOOGLE_CALENDAR_ID2
     }/events?timeMin=${today.toISOString()}&maxResults=30`,
     {
       headers: {
@@ -283,7 +281,7 @@ const getEvents = async (req, res) => {
               //   endDate: event.end.dateTime,
               //   title: event.summary,
               //   notes: event.description,
-              //}))
+              // }))
             );
           }
           return res.status(response.status).json(response.message);

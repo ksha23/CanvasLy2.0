@@ -1,38 +1,23 @@
 import { useEffect, useState } from "react";
 import "./Assignments.css";
 import EventComponent from "../components/Event";
-// import PopupComponent from "../components/Popup";
 import Navbar from "../components/Navbar";
 import { useSelector } from "react-redux";
-import ReduxTester from "../components/ReduxTester";
-
-// get the calendar events from the backend
-async function getCalendarEvents() {
-  const response = await fetch("http://localhost:4000/api/v1/calendar/events", {
-    method: "get",
-    credentials: "include",
-  });
-  const data = await response.json();
-  return data;
-}
+import { getAssignments } from "../redux/actions/assignmentListAction";
+import { useDispatch } from "react-redux";
 
 function AssignmentsPage() {
-  const [events, setEvents] = useState([]);
-
-  // redux-testing
-  const assignments = useSelector((state) => state.assignmentsReducer);
-  console.warn("data in assignments page", assignments);
+  const dispatch = useDispatch();
+  let events = useSelector((state) => state.assignmentsListReducer);
 
   useEffect(() => {
-    async function fetchData() {
-      const events = await getCalendarEvents();
-      if (events.error) {
-        return;
-      }
-      setEvents(events);
-    }
-    fetchData();
-  }, []);
+    dispatch(getAssignments());
+    const interval = setInterval(() => {
+      dispatch(getAssignments()); // automatically refresh data every minute
+    }, 60000);
+
+    return () => clearInterval(interval); // Cleanup function to clear interval on component unmount
+  }, [dispatch]);
 
   const [updatedEvents, setUpdatedEvents] = useState([]);
 
@@ -97,18 +82,16 @@ function AssignmentsPage() {
   return (
     <>
       <Navbar />
-      <ReduxTester />
-      <p>{assignments.length}</p>
+      {/* <p>{assignments.length}</p> */}
       <div className="assignments-container">
         <main>
           <section className="canvas-assignments">
             <h2>Canvas Assignments:</h2>
-            {/* <PopupComponent /> */}
           </section>
           <section className="canvas-assignments">
             {updatedEvents.length > 0 && (
               <button className="update-all-btn" onClick={updateAllEvents}>
-                Update All
+                <strong>Update All</strong> (Refreshes Page)
               </button>
             )}
             {/* <button onClick={() => setUpdatedEvents([])}>Cancel Changes</button> */}
@@ -119,19 +102,21 @@ function AssignmentsPage() {
           <div className="events-list">
             {events &&
               events.length > 0 &&
-              events.map((event) => (
-                <EventComponent
-                  key={event._id}
-                  id={event._id}
-                  name={event.name}
-                  dateTime={event.dueDate}
-                  difficulty={event.difficulty}
-                  type={event.type}
-                  reminders={event.reminders}
-                  onUpdateDifficultyAndType={onUpdateDifficultyAndType} // Pass update functions as props
-                  className="event"
-                />
-              ))}
+              events.map((event) =>
+                !event.completed ? (
+                  <EventComponent
+                    key={event._id}
+                    id={event._id}
+                    name={event.name}
+                    dateTime={event.dueDate}
+                    difficulty={event.difficulty}
+                    type={event.type}
+                    reminders={event.reminders}
+                    onUpdateDifficultyAndType={onUpdateDifficultyAndType}
+                    className="event"
+                  />
+                ) : null
+              )}
           </div>
         </main>
       </div>

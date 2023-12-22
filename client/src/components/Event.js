@@ -1,68 +1,12 @@
 import React from "react";
 import "./Event.css";
 import { useState, useEffect } from "react";
-
-const addReminder = async (id, reminder) => {
-  const response = await fetch(
-    `http://localhost:4000/api/v1/assignments/reminder/${id}`,
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ reminder: reminder }),
-    }
-  );
-  const data = await response.json();
-  window.location.reload();
-  return data;
-};
-
-const completeAssignment = async (id) => {
-  const response = await fetch(
-    `http://localhost:4000/api/v1/assignments/complete/${id}`,
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id: id }),
-    }
-  );
-  const data = await response.json();
-  window.location.reload();
-  return data;
-};
-
-const changeAssignmentDifficulty = async (id, difficulty) => {
-  const response = await fetch(
-    `http://localhost:4000/api/v1/assignments/difficulty/${id}`,
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id: id, difficulty: difficulty }),
-    }
-  );
-  const data = await response.json();
-  return data;
-};
-
-const changeAssignmentType = async (id, type) => {
-  const response = await fetch(
-    `http://localhost:4000/api/v1/assignments/type/${id}`,
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id: id, type: type }),
-    }
-  );
-  const data = await response.json();
-  return data;
-};
+import { useDispatch } from "react-redux";
+import { completeAssignment } from "../redux/actions/assignmentListAction";
+import { updateAssignmentDifficulty } from "../redux/actions/assignmentListAction";
+import { updateAssignmentType } from "../redux/actions/assignmentListAction";
+import { useSelector } from "react-redux";
+import { addAssignmentReminderAction } from "../redux/actions/assignmentListAction";
 
 const EventComponent = ({
   id,
@@ -73,6 +17,26 @@ const EventComponent = ({
   reminders,
   onUpdateDifficultyAndType,
 }) => {
+  const dispatch = useDispatch();
+
+  const changeAssignmentDifficulty = async (id, difficulty) => {
+    dispatch(updateAssignmentDifficulty(id, difficulty));
+    await handleEdited(id, difficulty, type);
+  };
+
+  const changeAssignmentType = async (id, type) => {
+    dispatch(updateAssignmentType(id, type));
+    await handleEdited(id, difficulty, type);
+  };
+
+  const addReminder = async (id, reminder) => {
+    dispatch(addAssignmentReminderAction(id, reminder));
+  };
+
+  const complete = (id) => {
+    dispatch(completeAssignment(id));
+  };
+
   const formattedDateTime = new Date(dateTime);
 
   const extractContentInBrackets = (str) => {
@@ -91,28 +55,19 @@ const EventComponent = ({
     }
   };
 
-  const updateAssignment = async (
-    id,
-    originalDifficulty,
-    originalType,
-    difficulty,
-    type
-  ) => {
-    if (originalDifficulty != difficulty && originalType != type) {
+  const handleUpdateButtonClick = async (id, difficulty, type) => {
+    if (assignment.difficulty != difficulty && assignment.type != type) {
       await changeAssignmentDifficulty(id, difficulty);
       await changeAssignmentType(id, type);
-      window.location.reload();
-    } else if (originalDifficulty != difficulty) {
+    } else if (assignment.difficulty != difficulty) {
       await changeAssignmentDifficulty(id, difficulty);
-      window.location.reload();
-    } else if (originalType != type) {
+    } else if (assignment.assignmentType != type) {
       await changeAssignmentType(id, type);
-      window.location.reload();
     }
   };
 
   const handleEdited = async (id, difficulty, type) => {
-    if (originalType == type && originalDifficulty == difficulty) {
+    if (assignment.type == type && assignment.difficulty == difficulty) {
       await setEdited(false);
       onUpdateDifficultyAndType(false, id, difficulty, type);
     } else {
@@ -125,25 +80,28 @@ const EventComponent = ({
 
   const undoAllChanges = async () => {
     await setEdited(false);
-    await setType(originalType);
-    await setDifficulty(originalDifficulty);
-    onUpdateDifficultyAndType(false, id, originalDifficulty, originalType);
+    await setType(assignment.type);
+    await setDifficulty(assignment.difficulty);
+    onUpdateDifficultyAndType(
+      false,
+      id,
+      assignment.difficulty,
+      assignment.type
+    );
   };
 
-  const [originalType, setOriginalType] = useState("");
-  const [originalDifficulty, setOriginalDifficulty] = useState("");
   const [theType, setType] = useState("");
   const [theDifficulty, setDifficulty] = useState("");
   const [edited, setEdited] = useState(false);
   const [reminder, setReminder] = useState("");
 
   useEffect(() => {
-    setOriginalType(type);
-    setOriginalDifficulty(difficulty);
     setType(type);
     setDifficulty(difficulty);
   }, [difficulty, type]);
 
+  let assignments = useSelector((state) => state.assignmentsListReducer);
+  let assignment = assignments.find((assignment) => assignment._id === id);
   const extractedContent = extractContentInBrackets(name);
   const displayName = extractedContent ? `${extractedContent} ` : "";
 
@@ -168,7 +126,7 @@ const EventComponent = ({
         </p>
         <button
           className="complete-assignment-btn"
-          onClick={() => completeAssignment(id)}
+          onClick={() => complete(id)}
         >
           Complete Assignment
         </button>
@@ -213,15 +171,7 @@ const EventComponent = ({
         {edited && (
           <button
             type="submit"
-            onClick={() =>
-              updateAssignment(
-                id,
-                originalDifficulty,
-                originalType,
-                theDifficulty,
-                theType
-              )
-            }
+            onClick={() => handleUpdateButtonClick(id, theDifficulty, theType)}
           >
             Update
           </button>

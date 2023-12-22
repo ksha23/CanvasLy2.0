@@ -3,54 +3,50 @@ import "./Navbar.css";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // Ensure you import useHistory from react-router-dom
 
-async function auth() {
-  window.location.href = "http://localhost:4000/api/v1/auth/google";
-}
-
-async function logout() {
-  const response = await fetch("http://localhost:4000/api/v1/auth/logout", {
-    method: "get",
-    credentials: "include",
-  });
-
-  const data = await response.json();
-  if (data.message === "Successfully logged out") {
-    window.location.reload();
-  }
-}
-
-async function getUserData() {
-  const response = await fetch("http://localhost:4000/api/v1/auth/user", {
-    method: "get",
-    credentials: "include",
-  });
-
-  const data = await response.json();
-  return data;
-}
-
 const Navbar = () => {
-  const [name, setName] = useState("");
-  const [image, setImage] = useState("");
-  const [isLoggedIn, setIsLogged] = useState(false);
+  const [userData, setUserData] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function fetchData() {
-      const response = await getUserData();
-      if (response.message === "Unauthorized" || response.user === null) {
-        setName("");
-        setIsLogged(false);
-        navigate("/");
-      } else {
-        setName(response.user.googleName);
-        setImage(response.user.photo);
-        setIsLogged(true);
-        navigate("/assignments");
-      }
-    }
+    const fetchData = async () => {
+      await fetchUserData();
+    };
     fetchData();
-  }, [navigate]);
+  }, []);
+
+  async function auth() {
+    window.open("http://localhost:4000/api/v1/auth/google", "_self");
+  }
+
+  async function logout() {
+    const response = await fetch("http://localhost:4000/api/v1/auth/logout", {
+      method: "get",
+      credentials: "include",
+    });
+
+    const data = await response.json();
+    if (data.message === "Successfully logged out") {
+      setIsLoggedIn(false);
+      navigate("/");
+    }
+  }
+
+  async function fetchUserData() {
+    const response = await fetch("http://localhost:4000/api/v1/auth/user", {
+      method: "get",
+      credentials: "include",
+    });
+
+    const data = await response.json();
+    if (data.user === null) {
+      setIsLoggedIn(false);
+    } else {
+      setIsLoggedIn(true);
+      setUserData(data.user);
+      navigate("/assignments");
+    }
+  }
 
   return (
     <header className="navbar">
@@ -63,8 +59,10 @@ const Navbar = () => {
       </div>
       <div className="right-section">
         <div className="user-profile">
-          {image && <img className="profile-img" src={image} alt="Profile" />}
-          <h2 className="profile-name">{name}</h2>
+          {userData && (
+            <img className="profile-img" src={userData.photo} alt="Profile" />
+          )}
+          {userData && <h2 className="profile-name">{userData.googleName}</h2>}
         </div>
         <div className="buttons">
           {!isLoggedIn && (

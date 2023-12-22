@@ -1,7 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
 import rootReducer from "./rootReducer";
-import assignmentsSaga from "./saga/assignmentsSaga";
+// import assignmentListSaga from "./saga/assignmentListSaga";
 import createSagaMiddleware from "redux-saga";
+import rootSaga from "./rootSaga";
 
 const sagaMiddleWare = createSagaMiddleware();
 const store = configureStore({
@@ -9,5 +10,5 @@ const store = configureStore({
   middleware: () => [sagaMiddleWare],
 });
 
-sagaMiddleWare.run(assignmentsSaga);
+sagaMiddleWare.run(rootSaga);
 export default store;
