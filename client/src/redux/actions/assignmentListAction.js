@@ -18,7 +18,6 @@ export const completeAssignment = (id) => {
 };
 
 export const updateAssignmentType = (id, assignmentType) => {
-  console.warn("updateAssignmentType action called");
   return {
     type: UPDATE_ASSIGNMENT_TYPE,
     id,
@@ -27,7 +26,6 @@ export const updateAssignmentType = (id, assignmentType) => {
 };
 
 export const updateAssignmentDifficulty = (id, difficulty) => {
-  console.warn("updateAssignmentDifficulty action called");
   return {
     type: UPDATE_ASSIGNMENT_DIFFICULTY,
     id,

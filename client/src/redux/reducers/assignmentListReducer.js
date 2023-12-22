@@ -122,18 +122,14 @@ export const assignmentsListReducer = (data = [], action) => {
       data[index].completed = true;
       return [...data].sort(customSort2);
     case UPDATE_ASSIGNMENT_DIFFICULTY:
-      console.warn("UPDATE_ASSIGNMENT_DIFFICULTY reducer called");
       const id2 = action.id;
       const index2 = data.findIndex((assignment) => assignment._id === id2);
       data[index2].difficulty = action.difficulty;
-      console.warn("data after", data);
       return [...data].sort(customSort2);
     case UPDATE_ASSIGNMENT_TYPE:
-      console.warn("UPDATE_ASSIGNMENT_TYPE reducer called");
       const id3 = action.id;
       const index3 = data.findIndex((assignment) => assignment._id === id3);
       data[index3].type = action.assignmentType;
-      console.warn("data after", data);
       return [...data].sort(customSort2);
     case ADD_ASSIGNMENT_REMINDER:
       const id4 = action.id;
