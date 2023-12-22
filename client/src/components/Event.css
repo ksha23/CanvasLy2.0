@@ -126,9 +126,9 @@ button[type="submit"]:hover {
 .add-reminder-input {
   padding: 8px;
   margin-right: 10px;
-  box-shadow: none;
-  border-color: grey;
   border-radius: 5px;
+  border-width: 1px;
+  border-color: rgb(170, 170, 170);
 }
 
 .add-reminder-btn {

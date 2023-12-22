@@ -31,6 +31,7 @@ const EventComponent = ({
 
   const addReminder = async (id, reminder) => {
     dispatch(addAssignmentReminderAction(id, reminder));
+    await setReminder("");
   };
 
   const complete = (id) => {
@@ -38,6 +39,7 @@ const EventComponent = ({
   };
 
   const formattedDateTime = new Date(dateTime);
+  formattedDateTime.setHours(formattedDateTime.getHours() + 6);
 
   const extractContentInBrackets = (str) => {
     const matches = str.match(/\[(.*?)\]/);
@@ -128,7 +130,7 @@ const EventComponent = ({
           className="complete-assignment-btn"
           onClick={() => complete(id)}
         >
-          Complete Assignment
+          Complete
         </button>
         <select
           onChange={(e) => {
@@ -158,6 +160,7 @@ const EventComponent = ({
           className="add-reminder-input"
           type="text"
           placeholder="Reminder..."
+          value={reminder}
           onChange={(e) => {
             setReminder(e.target.value);
           }}
@@ -178,7 +181,7 @@ const EventComponent = ({
         )}
         {edited && (
           <button className="undo-changes-btn" onClick={() => undoAllChanges()}>
-            Undo Changes
+            Undo
           </button>
         )}
         {reminders && reminders.length > 0 && (

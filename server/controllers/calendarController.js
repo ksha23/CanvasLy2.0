@@ -162,7 +162,6 @@ const getAssignmentsByCalendarId = async (calendarId) => {
     if (!calendar) {
       console.error("Calendar not found");
     }
-    console.log(calendar.assignments);
     return calendar.assignments;
   } catch (error) {
     console.error(error);
@@ -206,6 +205,12 @@ const postProcess = async (data, googleId) => {
   const filteredAssignments = assignments.filter(
     (assignment) => !assignment.completed
   );
+
+  // filter out assignments that are overdue
+  // const currentDate = new Date();
+  // const filteredAssignments2 = filteredAssignments.filter(
+  //   (assignment) => new Date(assignment.dueDate) > currentDate
+  // );
 
   // add any other filters here!!!!!
 

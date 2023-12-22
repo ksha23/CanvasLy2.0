@@ -1,5 +1,5 @@
 .assignments-container {
-    margin: 40px;
+    margin: 30px;
     padding-top: 60px;
     font-family: Arial, sans-serif;
   }
@@ -22,6 +22,7 @@ button {
 .update-all-btn {
   background-color: #28a745;
   color: white;
+  font-size:16px;
 }
 
 .update-all-btn:hover {

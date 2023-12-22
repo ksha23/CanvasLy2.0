@@ -7,6 +7,10 @@ import {
 import { COMPLETE_ASSIGNMENT } from "../constant";
 
 const customSort2 = (a, b) => {
+  const dueDateWeight = 0.5;
+  const typeWeight = 0.25;
+  const difficultyWeight = 0.25;
+
   const typeValues = {
     Other: 1,
     Assignment: 2,
@@ -16,35 +20,49 @@ const customSort2 = (a, b) => {
   };
 
   const dateA = new Date(a.dueDate);
+  dateA.setHours(dateA.getHours() + 6);
+
   const dateB = new Date(b.dueDate);
+  dateB.setHours(dateA.getHours() + 6);
 
-  const dateDiff = dateA - dateB; // Difference in due dates
+  const currentDate = new Date();
 
-  // Calculate weighted values for type and difficulty
-  const weightedTypeA = typeValues[a.type] * 2; // Increase the weight for type
-  const weightedTypeB = typeValues[b.type] * 2;
-  const difficultyWeightA = a.difficulty / 2; // Decrease the weight for difficulty
-  const difficultyWeightB = b.difficulty / 2;
+  const daysBetweenA = Math.abs((dateA - currentDate) / (1000 * 3600 * 24));
+  const daysBetweenB = Math.abs((dateB - currentDate) / (1000 * 3600 * 24));
 
-  // Calculate weighted values for each task
-  const weightedValueA = weightedTypeA + difficultyWeightA;
-  const weightedValueB = weightedTypeB + difficultyWeightB;
+  // plug into function 1/1.2^x
+  const normalizedDueDateValueA = 1 / Math.pow(1.2, daysBetweenA);
+  const normalizedDueDateValueB = 1 / Math.pow(1.2, daysBetweenB);
 
-  // Adjust the final sort comparison based on the weighted values
-  if (weightedValueA > weightedValueB) {
-    return -1; // A should come before B
-  } else if (weightedValueA < weightedValueB) {
-    return 1; // B should come before A
-  } else {
-    // If weighted values are equal, prioritize by due date
-    return dateDiff;
+  const maxTypeValue = 5;
+  const maxDifficultyValue = 5;
+
+  const normalizedTypeValueA = typeValues[a.type] / maxTypeValue;
+  const normalizedDifficultyValueA = a.difficulty / maxDifficultyValue;
+
+  const normalizedTypeValueB = typeValues[b.type] / maxTypeValue;
+  const normalizedDifficultyValueB = b.difficulty / maxDifficultyValue;
+
+  const scoreA =
+    dueDateWeight * normalizedDueDateValueA +
+    typeWeight * normalizedTypeValueA +
+    difficultyWeight * normalizedDifficultyValueA;
+
+  const scoreB =
+    dueDateWeight * normalizedDueDateValueB +
+    typeWeight * normalizedTypeValueB +
+    difficultyWeight * normalizedDifficultyValueB;
+
+  if (scoreA < scoreB) {
+    return 1;
   }
+  if (scoreA > scoreB) {
+    return -1;
+  }
+  return 0;
 };
 
 function customSort(a, b) {
-  console.log("a", a);
-  console.log("b", b);
-
   const dateWeight = 0.5;
   const typeWeight = 0.3;
   const difficultyWeight = 0.2;
