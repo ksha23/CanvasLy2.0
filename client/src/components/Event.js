@@ -16,16 +16,23 @@ const EventComponent = ({
   type,
   reminders,
   onUpdateDifficultyAndType,
+  completedAnEvent,
 }) => {
   const dispatch = useDispatch();
 
   const changeAssignmentDifficulty = async (id, difficulty) => {
-    dispatch(updateAssignmentDifficulty(id, difficulty));
-    await handleEdited(id, difficulty, type);
+    await dispatch(updateAssignmentDifficulty(id, difficulty));
+    await handleEdited(id, assignment.difficulty, type);
   };
 
   const changeAssignmentType = async (id, type) => {
-    dispatch(updateAssignmentType(id, type));
+    await dispatch(updateAssignmentType(id, type));
+    await handleEdited(id, assignment.difficulty, type);
+  };
+
+  const changeAssignmentDifficultyAndType = async (id, difficulty, type) => {
+    await dispatch(updateAssignmentDifficulty(id, difficulty));
+    await dispatch(updateAssignmentType(id, type));
     await handleEdited(id, difficulty, type);
   };
 
@@ -35,6 +42,7 @@ const EventComponent = ({
   };
 
   const complete = (id) => {
+    completedAnEvent();
     dispatch(completeAssignment(id));
   };
 
@@ -59,8 +67,7 @@ const EventComponent = ({
 
   const handleUpdateButtonClick = async (id, difficulty, type) => {
     if (assignment.difficulty != difficulty && assignment.type != type) {
-      await changeAssignmentDifficulty(id, difficulty);
-      await changeAssignmentType(id, type);
+      await changeAssignmentDifficultyAndType(id, difficulty, type);
     } else if (assignment.difficulty != difficulty) {
       await changeAssignmentDifficulty(id, difficulty);
     } else if (assignment.assignmentType != type) {
@@ -76,8 +83,8 @@ const EventComponent = ({
       await setEdited(true);
       onUpdateDifficultyAndType(true, id, difficulty, type);
     }
-    await setType(type);
-    await setDifficulty(difficulty);
+    setType(type);
+    setDifficulty(difficulty);
   };
 
   const undoAllChanges = async () => {
@@ -122,7 +129,11 @@ const EventComponent = ({
       <div className="event-details">
         <p className="due-date">
           <strong>Due Date: </strong>
-          {formatDate(formattedDateTime)} | <strong>Difficulty: </strong>
+          {formatDate(formattedDateTime)}{" "}
+          {`(${Math.ceil(
+            (formattedDateTime - new Date()) / (1000 * 60 * 60 * 24)
+          )} days) `}
+          | <strong>Difficulty: </strong>
           {difficulty} | <strong>Type: </strong>
           {type}
         </p>

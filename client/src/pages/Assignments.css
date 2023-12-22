@@ -20,12 +20,12 @@ button {
 }
 
 .update-all-btn {
-  background-color: #28a745;
+  background-color: #008f21;
   color: white;
   font-size:16px;
 }
 
 .update-all-btn:hover {
-  background-color: #218838;
+  background-color: #005f15;
 }
   

@@ -11,7 +11,6 @@ export const getAssignments = () => {
 };
 
 export const completeAssignment = (id) => {
-  console.warn("completeAssignment action called ", id);
   return {
     type: COMPLETE_ASSIGNMENT,
     id,
@@ -19,7 +18,7 @@ export const completeAssignment = (id) => {
 };
 
 export const updateAssignmentType = (id, assignmentType) => {
-  console.warn("updateAssignmentType action called ", id);
+  console.warn("updateAssignmentType action called");
   return {
     type: UPDATE_ASSIGNMENT_TYPE,
     id,
@@ -28,7 +27,7 @@ export const updateAssignmentType = (id, assignmentType) => {
 };
 
 export const updateAssignmentDifficulty = (id, difficulty) => {
-  console.warn("updateAssignmentDifficulty action called ", id);
+  console.warn("updateAssignmentDifficulty action called");
   return {
     type: UPDATE_ASSIGNMENT_DIFFICULTY,
     id,
@@ -37,8 +36,6 @@ export const updateAssignmentDifficulty = (id, difficulty) => {
 };
 
 export const addAssignmentReminderAction = (id, reminder) => {
-  console.warn("addAssginmentReminder action called ", id);
-  console.warn("reminder: ", reminder);
   return {
     type: ADD_ASSIGNMENT_REMINDER,
     id,

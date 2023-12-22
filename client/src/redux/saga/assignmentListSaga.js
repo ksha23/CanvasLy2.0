@@ -8,7 +8,6 @@ function* getAssignmentsWorker() {
     credentials: "include",
   });
   data = yield data.json();
-  console.warn("getAssignments saga called ", data);
   yield put({ type: "SET_ASSIGNMENTS_LIST", data });
 }
 

@@ -5,8 +5,10 @@ import Navbar from "../components/Navbar";
 import { useSelector } from "react-redux";
 import { getAssignments } from "../redux/actions/assignmentListAction";
 import { useDispatch } from "react-redux";
+import Confetti from "react-confetti";
 
 function AssignmentsPage() {
+  const [showConfetti, setShowConfetti] = useState(false);
   const dispatch = useDispatch();
   let events = useSelector((state) => state.assignmentsListReducer);
 
@@ -48,6 +50,11 @@ function AssignmentsPage() {
     setUpdatedEvents(updatedEventsCopy);
   };
 
+  const completedAnEvent = () => {
+    setShowConfetti(true);
+    setTimeout(() => setShowConfetti(false), 3000); // Change 3000 to the desired duration of the confetti
+  };
+
   // Update all events with updated values
   const updateAllEvents = async () => {
     if (updatedEvents.length === 0) {
@@ -84,6 +91,8 @@ function AssignmentsPage() {
       <Navbar />
       {/* <p>{assignments.length}</p> */}
       <div className="assignments-container">
+        {showConfetti && <Confetti />}
+
         <main>
           <section className="canvas-assignments">
             <h2>Canvas Assignments:</h2>
@@ -91,7 +100,7 @@ function AssignmentsPage() {
           <section className="canvas-assignments">
             {updatedEvents.length > 0 && (
               <button className="update-all-btn" onClick={updateAllEvents}>
-                <strong>Update All</strong> (Refreshes Page)
+                Update All
               </button>
             )}
             {/* <button onClick={() => setUpdatedEvents([])}>Cancel Changes</button> */}
@@ -113,6 +122,7 @@ function AssignmentsPage() {
                     type={event.type}
                     reminders={event.reminders}
                     onUpdateDifficultyAndType={onUpdateDifficultyAndType}
+                    completedAnEvent={completedAnEvent}
                     className="event"
                   />
                 ) : null

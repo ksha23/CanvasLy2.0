@@ -31,8 +31,8 @@ const customSort2 = (a, b) => {
   const daysBetweenB = Math.abs((dateB - currentDate) / (1000 * 3600 * 24));
 
   // plug into function 1/1.2^x
-  const normalizedDueDateValueA = 1 / Math.pow(1.2, daysBetweenA);
-  const normalizedDueDateValueB = 1 / Math.pow(1.2, daysBetweenB);
+  const normalizedDueDateValueA = 1 / Math.pow(2, daysBetweenA);
+  const normalizedDueDateValueB = 1 / Math.pow(2, daysBetweenB);
 
   const maxTypeValue = 5;
   const maxDifficultyValue = 5;
@@ -117,7 +117,6 @@ export const assignmentsListReducer = (data = [], action) => {
     case SET_ASSIGNMENTS_LIST:
       return [...action.data].sort(customSort2);
     case COMPLETE_ASSIGNMENT:
-      console.warn("COMPLETE_ASSIGNMENT reducer called");
       const id = action.id;
       const index = data.findIndex((assignment) => assignment._id === id);
       data[index].completed = true;
@@ -127,21 +126,19 @@ export const assignmentsListReducer = (data = [], action) => {
       const id2 = action.id;
       const index2 = data.findIndex((assignment) => assignment._id === id2);
       data[index2].difficulty = action.difficulty;
-      console.warn("new data: ", data);
+      console.warn("data after", data);
       return [...data].sort(customSort2);
     case UPDATE_ASSIGNMENT_TYPE:
       console.warn("UPDATE_ASSIGNMENT_TYPE reducer called");
       const id3 = action.id;
       const index3 = data.findIndex((assignment) => assignment._id === id3);
       data[index3].type = action.assignmentType;
-      console.warn("new data: ", data);
+      console.warn("data after", data);
       return [...data].sort(customSort2);
     case ADD_ASSIGNMENT_REMINDER:
-      console.warn("ADD_ASSIGNMENT_REMINDER reducer called");
       const id4 = action.id;
       const index4 = data.findIndex((assignment) => assignment._id === id4);
       data[index4].reminders.push(action.reminder);
-      console.warn("new data: ", data);
       return [...data].sort(customSort2);
     default:
       return data;
