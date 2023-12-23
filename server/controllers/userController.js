@@ -1,5 +1,6 @@
 const User = require("../db/models/user");
 
+// Get user info
 const getUserSimple = async (req, res) => {
   try {
     const user = await User.findOne({ _id: req.user._id });
@@ -17,7 +18,7 @@ const getUserSimple = async (req, res) => {
   }
 };
 
-// Set calendar ID by user ID
+// Set calendar ID
 const setCalendarId = async (req, res) => {
   const { calendarId } = req.body;
   try {
