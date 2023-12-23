@@ -117,7 +117,7 @@ function AssignmentsPage() {
             <input
               className="calendar-id-input"
               type="text"
-              placeholder="Enter your Canvas Calendar ID"
+              placeholder="Enter your Google Calendar ID"
               onChange={(e) => setTheCalendarId(e.target.value)}
             />
 

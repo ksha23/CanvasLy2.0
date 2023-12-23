@@ -31,7 +31,7 @@ button {
 
 .calendar-id-input {
   margin-top: 10px;
-  width: 400px;
+  width: 480px;
   height: 25px;
   font-size: 14px;
   margin-right: 10px;
@@ -41,7 +41,7 @@ button {
 }
 
 .calendar-id-submit-btn {
-  background-color: #e40000;
+  background-color: #d10000;
   color: white;
   font-size:14px;
   margin-top: 10px;

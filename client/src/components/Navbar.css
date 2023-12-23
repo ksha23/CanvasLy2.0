@@ -7,7 +7,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px;
-    background-color: #e40000;
+    background-color: #d10000;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
   
@@ -19,6 +19,15 @@
   
   .right-section {
     background-color: white;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    padding: 10px 10px;
+    margin-right:30px;
+  }
+
+  .right-section-login {
+    background-color: transparent;
     border-radius: 5px;
     display: flex;
     align-items: center;
@@ -51,6 +60,7 @@
     padding: 0px;
     width: 200px;
     height: 44px;
+    background-color: transparent;
   }
   
   .profile-name {
@@ -66,7 +76,7 @@
   }
   
   .login-btn {
-    background-color: white;
+    background-color: transparent;
     margin: 0px;
     padding: 0px;
     border: none;
@@ -76,7 +86,7 @@
 
   .logout-btn {
     margin-left: 20px;
-    background-color: #e40000;
+    background-color: #d10000;
     color: white;
     border: none;
     cursor: pointer;

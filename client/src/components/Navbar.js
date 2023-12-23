@@ -60,7 +60,7 @@ const Navbar = () => {
           alt="Canvasly Logo"
         />
       </div>
-      <div className="right-section">
+      <div className={isLoggedIn ? "right-section" : "right-section-login"}>
         <div className="user-profile">
           {userData && (
             <img className="profile-img" src={userData.photo} alt="Profile" />
