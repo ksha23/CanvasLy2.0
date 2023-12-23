@@ -129,7 +129,7 @@ const EventComponent = ({
         <p className="due-date">
           <strong>Due Date: </strong>
           {formatDate(formattedDateTime)}{" "}
-          {`(${Math.ceil(
+          {`(${Math.floor(
             (formattedDateTime - new Date()) / (1000 * 60 * 60 * 24)
           )} days) `}
           | <strong>Difficulty: </strong>

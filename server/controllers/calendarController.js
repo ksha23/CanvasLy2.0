@@ -145,12 +145,12 @@ const postProcess = async (data, googleId, timeZone) => {
   // for each assignment, if its dueDate does not have a time, set the time to 11:59 PM and set to UTC time
   newData.forEach((assignment) => {
     if (!assignment.dueDate.includes("T")) {
-      const customerLocalTime = DateTime.fromISO(assignment.dueDate, {
+      assignment.dueDate = DateTime.fromISO(assignment.dueDate, {
         zone: timeZone,
-      });
-      const utcTime = customerLocalTime.toUTC();
-
-      assignment.dueDate = utcTime.toISO();
+      })
+        .set({ hour: 23, minute: 59 })
+        .toUTC()
+        .toISO();
     }
   });
 

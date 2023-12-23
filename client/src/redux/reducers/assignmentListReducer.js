@@ -20,10 +20,7 @@ const customSort2 = (a, b) => {
   };
 
   const dateA = new Date(a.dueDate);
-  // dateA.setHours(dateA.getHours() + 6);
-
   const dateB = new Date(b.dueDate);
-  // dateB.setHours(dateA.getHours() + 6);
 
   const currentDate = new Date();
 
@@ -31,8 +28,8 @@ const customSort2 = (a, b) => {
   const daysBetweenB = Math.abs((dateB - currentDate) / (1000 * 3600 * 24));
 
   // plug into function 1/1.2^x
-  const normalizedDueDateValueA = 1 / Math.pow(2, daysBetweenA);
-  const normalizedDueDateValueB = 1 / Math.pow(2, daysBetweenB);
+  const normalizedDueDateValueA = 1 / Math.pow(1.2, daysBetweenA);
+  const normalizedDueDateValueB = 1 / Math.pow(1.2, daysBetweenB);
 
   const maxTypeValue = 5;
   const maxDifficultyValue = 5;
