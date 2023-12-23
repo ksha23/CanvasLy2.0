@@ -33,10 +33,13 @@ const Navbar = () => {
   }
 
   async function fetchUserData() {
-    const response = await fetch("http://localhost:4000/api/v1/auth/user", {
-      method: "get",
-      credentials: "include",
-    });
+    const response = await fetch(
+      "http://localhost:4000/api/v1/users/userSimple",
+      {
+        method: "get",
+        credentials: "include",
+      }
+    );
 
     const data = await response.json();
     if (data.user === null) {

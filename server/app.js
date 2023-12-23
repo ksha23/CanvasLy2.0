@@ -12,6 +12,7 @@ const passport = require("passport");
 const authRouter = require("./routes/auth");
 const calendarRouter = require("./routes/calendarRouter");
 const assignmentRouter = require("./routes/assignmentRouter");
+const usersRouter = require("./routes/usersRouter");
 
 const app = express();
 
@@ -51,7 +52,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/api/v1/auth", authRouter);
-// app.use("/api/v1/users", usersRouter);
+app.use("/api/v1/users", usersRouter);
 app.use("/api/v1/calendar", calendarRouter);
 app.use("/api/v1/assignments", assignmentRouter);
 

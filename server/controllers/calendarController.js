@@ -66,42 +66,6 @@ const createAssignments = async (calendarId, data) => {
   }
 };
 
-//create many assignments and associate them with a calendar
-// const createAssignments = async (calendarId, data) => {
-//   try {
-//     // only create assignments that don't already exist
-//     const existingAssignments = await Assignment.find({
-//       name: { $in: data.map((assignment) => assignment.name) },
-//     });
-//     const existingAssignmentNames = existingAssignments.map(
-//       (assignment) => assignment.name
-//     );
-//     data = data.filter(
-//       (assignment) => !existingAssignmentNames.includes(assignment.name)
-//     );
-
-//     const newAssignments = await Assignment.insertMany(data);
-
-//     if (calendarId) {
-//       const calendar = await Calendar.findOne({ googleCalendarId: calendarId });
-//       if (!calendar) {
-//         return { message: "Calendar not found" };
-//       }
-
-//       // Extract only the IDs of newly created assignments
-//       const assignmentIds = newAssignments.map((assignment) => assignment._id);
-//       // Add valid assignmentIds to the calendar's assignments field
-//       calendar.assignments.push(...assignmentIds);
-
-//       await calendar.save();
-//     }
-
-//     return newAssignments;
-//   } catch (error) {
-//     console.error(error);
-//   }
-// };
-
 // Get assignments belonging to a specific calendar
 const getAssignmentsByCalendarId = async (calendarId) => {
   try {
@@ -127,11 +91,11 @@ const getAssignmentsByCalendarId = async (calendarId) => {
 6. Sort assignments
 7. Send back _id, name, dueDate, completed, and reminders array
 */
-const postProcess = async (data, googleId, timeZone) => {
+const postProcess = async (data, googleId, timeZone, calendarId) => {
   // create calendar in database if it doesn't exist
   const calendarData = {
     googleId: googleId,
-    googleCalendarId: process.env.GOOGLE_CALENDAR_ID2,
+    googleCalendarId: calendarId,
     assignments: [],
   };
 
@@ -155,23 +119,15 @@ const postProcess = async (data, googleId, timeZone) => {
   });
 
   // save events to database if they don't already exist (also associate them with the calendar)
-  await createAssignments(process.env.GOOGLE_CALENDAR_ID2, newData);
+  await createAssignments(calendarId, newData);
 
   // ----------------- FILTERS --------------------
-  const assignments = await getAssignmentsByCalendarId(
-    process.env.GOOGLE_CALENDAR_ID2
-  );
+  const assignments = await getAssignmentsByCalendarId(calendarId);
 
   // filter out completed assignments
   const filteredAssignments = assignments.filter(
     (assignment) => !assignment.completed
   );
-
-  // filter out assignments that are overdue
-  // const currentDate = new Date();
-  // const filteredAssignments2 = filteredAssignments.filter(
-  //   (assignment) => new Date(assignment.dueDate) > currentDate
-  // );
 
   // add any other filters here!!!!!
 
@@ -183,11 +139,10 @@ const postProcess = async (data, googleId, timeZone) => {
 
 // Get events from Google Calendar API
 const getEventsFromGoogle = async (req, res) => {
+  const calendarId = req.user.calendarId;
   const today = new Date(); // Get today's date
   const response = await fetch(
-    `https://www.googleapis.com/calendar/v3/calendars/${
-      process.env.GOOGLE_CALENDAR_ID2
-    }/events?timeMin=${today.toISOString()}&maxResults=30`,
+    `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?timeMin=${today.toISOString()}&maxResults=30`,
     {
       headers: {
         Authorization: `Bearer ${req.user.accessToken}`,
@@ -201,6 +156,14 @@ const getEventsFromGoogle = async (req, res) => {
 const getEvents = async (req, res) => {
   let timeZone = "";
   try {
+    if (!req.user.calendarId) {
+      const user = await User.findOne({ _id: req.user._id }).exec(); // Convert to promise-based syntax
+      if (!user || !user.calendarId) {
+        return res.status(404).json({ message: "Calendar ID not found" });
+      } else {
+        req.user.calendarId = user.calendarId;
+      }
+    }
     const response = await getEventsFromGoogle(req, res);
     if (response.status === 200) {
       const data = await response.json();
@@ -208,7 +171,8 @@ const getEvents = async (req, res) => {
       const postProcessedData = await postProcess(
         data.items,
         req.user.googleId,
-        timeZone
+        timeZone,
+        req.user.calendarId
       );
       return res.json(postProcessedData);
     }
@@ -235,7 +199,8 @@ const getEvents = async (req, res) => {
             const postProcessedData = await postProcess(
               data.items,
               req.user.googleId,
-              timeZone
+              timeZone,
+              req.user.calendarId
             );
             return res.json(postProcessedData);
           }
@@ -244,6 +209,7 @@ const getEvents = async (req, res) => {
       );
     }
   } catch (error) {
+    console.error(error);
     return res.status(400).json([]);
   }
   return res.status(400).json([]);

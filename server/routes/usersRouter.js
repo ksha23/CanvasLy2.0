@@ -1,15 +1,14 @@
 const userRouter = require("express").Router();
 const {
-  userLogout,
-  userLoginRender,
-  getUser,
+  getUserSimple,
+  setCalendarId,
 } = require("../controllers/userController");
 const { checkAuth } = require("../middlewares/checkAuth");
 
-userRouter.route("/").get(checkAuth, getUser);
+// get user data
+userRouter.route("/userSimple").get(checkAuth, getUserSimple);
 
-userRouter.route("/login").get(userLoginRender);
-
-userRouter.route("/logout").get(checkAuth, userLogout);
+// set calendar ID
+userRouter.route("/setCalendarId").put(checkAuth, setCalendarId);
 
 module.exports = userRouter;

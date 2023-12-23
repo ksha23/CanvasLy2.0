@@ -1,3 +1,4 @@
+const { calendar } = require("googleapis/build/src/apis/calendar");
 const { Schema, model } = require("mongoose");
 
 const userSchema = new Schema({
@@ -25,6 +26,9 @@ const userSchema = new Schema({
     type: String,
   },
   refreshToken: {
+    type: String,
+  },
+  calendarId: {
     type: String,
   },
 });

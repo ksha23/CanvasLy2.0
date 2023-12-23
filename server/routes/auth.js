@@ -4,6 +4,7 @@ require("dotenv").config();
 
 const router = express.Router();
 
+// auth login
 router.get(
   "/google",
   passport.authenticate("google", {
@@ -14,6 +15,7 @@ router.get(
   })
 );
 
+// handle the callback after Google has authenticated the user
 router.get(
   "/google/redirect",
   passport.authenticate("google", {
@@ -23,21 +25,12 @@ router.get(
   })
 );
 
+// logout route
 router.get("/logout", (req, res) => {
   req.logout();
   req.session.destroy();
-  // res.clearCookie('cookieName');
-
-  // return res.redirect(`${process.env.OUR_URL}`);
+  res.clearCookie("sid");
   return res.json({ message: "Successfully logged out" });
-});
-
-router.get("/user", (req, res) => {
-  if (req.user) {
-    return res.json({ user: req.user });
-  } else {
-    return res.json({ user: null });
-  }
 });
 
 module.exports = router;

@@ -8,6 +8,21 @@ import { useDispatch } from "react-redux";
 import Confetti from "react-confetti";
 
 function AssignmentsPage() {
+  const setCalendarId = async (calendarId) => {
+    const response = await fetch(
+      `http://localhost:4000/api/v1/users/setCalendarId`,
+      {
+        method: "put",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ calendarId }),
+      }
+    );
+    const data = await response.json();
+  };
+
   const [showConfetti, setShowConfetti] = useState(false);
   const dispatch = useDispatch();
   let events = useSelector((state) => state.assignmentsListReducer);
@@ -22,6 +37,7 @@ function AssignmentsPage() {
   }, [dispatch]);
 
   const [updatedEvents, setUpdatedEvents] = useState([]);
+  const [thecalendarId, setTheCalendarId] = useState("");
 
   // Update difficulty for an event by ID
   const onUpdateDifficultyAndType = (edited, id, difficulty, type) => {
@@ -106,6 +122,20 @@ function AssignmentsPage() {
             {/* <button onClick={() => setUpdatedEvents([])}>Cancel Changes</button> */}
             {updatedEvents.length > 0 && (
               <p>{updatedEvents.length} assignments edited</p>
+            )}
+            {(!events || events.length <= 0) && (
+              <div>
+                <input
+                  className="calendar-id-input"
+                  type="text"
+                  placeholder="Enter your Canvas Calendar ID"
+                  onChange={(e) => setTheCalendarId(e.target.value)}
+                />
+
+                <button onClick={() => setCalendarId(thecalendarId)}>
+                  Set Calendar ID
+                </button>
+              </div>
             )}
           </section>
           <div className="events-list">
