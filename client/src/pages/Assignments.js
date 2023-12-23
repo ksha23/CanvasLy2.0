@@ -113,6 +113,21 @@ function AssignmentsPage() {
           <section className="canvas-assignments">
             <h2>Canvas Assignments:</h2>
           </section>
+          <div>
+            <input
+              className="calendar-id-input"
+              type="text"
+              placeholder="Enter your Canvas Calendar ID"
+              onChange={(e) => setTheCalendarId(e.target.value)}
+            />
+
+            <button
+              className="calendar-id-submit-btn"
+              onClick={() => setCalendarId(thecalendarId)}
+            >
+              Set Calendar ID
+            </button>
+          </div>
           <section className="canvas-assignments">
             {updatedEvents.length > 0 && (
               <button className="update-all-btn" onClick={updateAllEvents}>
@@ -122,20 +137,6 @@ function AssignmentsPage() {
             {/* <button onClick={() => setUpdatedEvents([])}>Cancel Changes</button> */}
             {updatedEvents.length > 0 && (
               <p>{updatedEvents.length} assignments edited</p>
-            )}
-            {(!events || events.length <= 0) && (
-              <div>
-                <input
-                  className="calendar-id-input"
-                  type="text"
-                  placeholder="Enter your Canvas Calendar ID"
-                  onChange={(e) => setTheCalendarId(e.target.value)}
-                />
-
-                <button onClick={() => setCalendarId(thecalendarId)}>
-                  Set Calendar ID
-                </button>
-              </div>
             )}
           </section>
           <div className="events-list">

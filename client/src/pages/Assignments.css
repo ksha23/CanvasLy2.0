@@ -30,9 +30,27 @@ button {
 }
 
 .calendar-id-input {
-  width: 300px;
-  height: 30px;
+  margin-top: 10px;
+  width: 400px;
+  height: 25px;
   font-size: 14px;
   margin-right: 10px;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid grey;
+}
+
+.calendar-id-submit-btn {
+  background-color: #e40000;
+  color: white;
+  font-size:14px;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid;
+}
+
+.calendar-id-submit-btn:hover {
+  background-color: #a00000;
 }
   

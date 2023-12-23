@@ -76,14 +76,14 @@
 
   .logout-btn {
     margin-left: 20px;
-    background-color: red;
+    background-color: #e40000;
     color: white;
     border: none;
     cursor: pointer;
     border-radius: 5px;
   }
   .logout-btn:hover {
-    background-color: rgb(204, 0, 0);
+    background-color: #a00000;
   }
 
 
