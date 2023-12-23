@@ -8,8 +8,8 @@ import { COMPLETE_ASSIGNMENT } from "../constant";
 
 const customSort2 = (a, b) => {
   const dueDateWeight = 0.5;
-  const typeWeight = 0.25;
-  const difficultyWeight = 0.25;
+  const typeWeight = 0.2;
+  const difficultyWeight = 0.3;
 
   const typeValues = {
     Other: 1,
@@ -20,10 +20,10 @@ const customSort2 = (a, b) => {
   };
 
   const dateA = new Date(a.dueDate);
-  dateA.setHours(dateA.getHours() + 6);
+  // dateA.setHours(dateA.getHours() + 6);
 
   const dateB = new Date(b.dueDate);
-  dateB.setHours(dateA.getHours() + 6);
+  // dateB.setHours(dateA.getHours() + 6);
 
   const currentDate = new Date();
 

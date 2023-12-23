@@ -3,58 +3,7 @@ const refresh = require("passport-oauth2-refresh");
 const User = require("../db/models/user");
 const Calendar = require("../db/models/calendar");
 const Assignment = require("../db/models/assignment");
-
-// ----------------- CUSTOM SORT --------------------
-
-function customSort(a, b) {
-  const dateWeight = 0.5;
-  const typeWeight = 0.3;
-  const difficultyWeight = 0.2;
-
-  const currentDate = new Date();
-  const dateA = new Date(a.dueDate);
-  const dateB = new Date(b.dueDate);
-
-  const typeValues = {
-    Other: 1,
-    Assignment: 2,
-    Quiz: 3,
-    Project: 4,
-    Exam: 5,
-  };
-
-  const daysDifferenceA = Math.abs((dateA - currentDate) / (1000 * 3600 * 24));
-  const daysDifferenceB = Math.abs((dateB - currentDate) / (1000 * 3600 * 24));
-
-  // Exponential increase factor for time weight
-  // function is 1 / (2^(0.5 * daysDifference) - 1)
-  const exponentialFactorA = 1 / (Math.pow(2, 0.5 * daysDifferenceA) - 1);
-  const exponentialFactorB = 1 / (Math.pow(2, 0.5 * daysDifferenceB) - 1);
-
-  const maxTypeValue = 5;
-  const maxDifficultyValue = 10;
-
-  const normalizedTypeValueA = typeValues[a.type] / maxTypeValue;
-  const normalizedDifficultyValueA = a.difficulty / maxDifficultyValue;
-  const scoreA =
-    dateWeight * exponentialFactorA +
-    typeWeight * normalizedTypeValueA +
-    difficultyWeight * normalizedDifficultyValueA;
-
-  const normalizedTypeValueB = typeValues[b.type] / maxTypeValue;
-  const normalizedDifficultyValueB = b.difficulty / maxDifficultyValue;
-  const scoreB =
-    dateWeight * exponentialFactorB +
-    typeWeight * normalizedTypeValueB +
-    difficultyWeight * normalizedDifficultyValueB;
-
-  if (scoreA < scoreB) {
-    return 1;
-  } else if (scoreA > scoreB) {
-    return -1;
-  }
-  return 0;
-}
+const { DateTime } = require("luxon");
 
 // ----------------- HELPERS --------------------
 
@@ -178,7 +127,7 @@ const getAssignmentsByCalendarId = async (calendarId) => {
 6. Sort assignments
 7. Send back _id, name, dueDate, completed, and reminders array
 */
-const postProcess = async (data, googleId) => {
+const postProcess = async (data, googleId, timeZone) => {
   // create calendar in database if it doesn't exist
   const calendarData = {
     googleId: googleId,
@@ -192,6 +141,18 @@ const postProcess = async (data, googleId) => {
     name: event.summary,
     dueDate: event.start.dateTime || event.start.date,
   }));
+
+  // for each assignment, if its dueDate does not have a time, set the time to 11:59 PM and set to UTC time
+  newData.forEach((assignment) => {
+    if (!assignment.dueDate.includes("T")) {
+      const customerLocalTime = DateTime.fromISO(assignment.dueDate, {
+        zone: timeZone,
+      });
+      const utcTime = customerLocalTime.toUTC();
+
+      assignment.dueDate = utcTime.toISO();
+    }
+  });
 
   // save events to database if they don't already exist (also associate them with the calendar)
   await createAssignments(process.env.GOOGLE_CALENDAR_ID2, newData);
@@ -238,25 +199,18 @@ const getEventsFromGoogle = async (req, res) => {
 
 // returns events from our database refreshed from Google Calendar API
 const getEvents = async (req, res) => {
+  let timeZone = "";
   try {
     const response = await getEventsFromGoogle(req, res);
     if (response.status === 200) {
       const data = await response.json();
+      timeZone = data.timeZone;
       const postProcessedData = await postProcess(
         data.items,
-        req.user.googleId
+        req.user.googleId,
+        timeZone
       );
-      return res.json(
-        postProcessedData
-
-        // data.items.map((event) => ({
-        //   id: event.id,
-        //   startDate: event.start.dateTime || event.start.date,
-        //   endDate: event.end.dateTime,
-        //   title: event.summary,
-        //   notes: event.description,
-        // }))
-      );
+      return res.json(postProcessedData);
     }
     if (response.status === 401) {
       refresh.requestNewAccessToken(
@@ -277,17 +231,13 @@ const getEvents = async (req, res) => {
           const newResponse = await getEventsFromGoogle(req, res);
           if (newResponse.status === 200) {
             const data = await newResponse.json();
-            const newData = await postProcess(data.items, req.user.googleId);
-            return res.json(
-              newData
-              // data.items.map((event) => ({
-              //   id: event.id,
-              //   startDate: event.start.dateTime || event.starte.date,
-              //   endDate: event.end.dateTime,
-              //   title: event.summary,
-              //   notes: event.description,
-              // }))
+            timeZone = data.timeZone;
+            const postProcessedData = await postProcess(
+              data.items,
+              req.user.googleId,
+              timeZone
             );
+            return res.json(postProcessedData);
           }
           return res.status(response.status).json(response.message);
         }

@@ -47,7 +47,6 @@ const EventComponent = ({
   };
 
   const formattedDateTime = new Date(dateTime);
-  formattedDateTime.setHours(formattedDateTime.getHours() + 6);
 
   const extractContentInBrackets = (str) => {
     const matches = str.match(/\[(.*?)\]/);
