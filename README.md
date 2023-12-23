@@ -10,11 +10,11 @@
 
 ## Example .env file
 
-PORT=
-DB_CONNECTION_CLOUD=
-
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
-
-OUR_URL=http://localhost:4000
-OUR_REACT=http://localhost:5173
+PORT=<br>
+DB_CONNECTION_CLOUD=<br>
+<br>
+GOOGLE_CLIENT_ID=<br>
+GOOGLE_CLIENT_SECRET=<br>
+<br>
+OUR_URL=http://localhost:4000<br>
+OUR_REACT=http://localhost:5173<br>
