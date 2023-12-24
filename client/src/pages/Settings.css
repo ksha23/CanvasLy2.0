@@ -1,13 +1,53 @@
 .container {
-    margin: 30px;
-    margin-top:120px;
-}
-
-.calendar-select {
-    width: 300px;
-    height: 35px;
-    font-size: 14px;
-    padding: 5px;
-    border-radius: 5px;
-    border: 1px solid rgb(167, 167, 167);
+    max-width: 600px;
+    margin: 0 auto;
+    margin-top:80px;
+    padding: 20px;
   }
+  
+  h2 {
+    text-align: center;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .calendar-select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  .input-container {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .input-container div {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    align-items: center;
+  }
+  
+  label {
+    font-weight: bold;
+  }
+  
+  input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  .error-message {
+    color: red;
+    margin-top: 8px;
+    text-align: center;
+  }
+  

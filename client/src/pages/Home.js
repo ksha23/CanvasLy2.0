@@ -9,12 +9,10 @@ const HomePage = () => {
       <Navbar />
       <div className="main-content">
         <h1>Welcome to CanvasLy</h1>
-        <p className="subtitle">
-          Empowering Students to Master Their Academic Journey
-        </p>
+        <p>Empowering Students to Master Their Academic Journey</p>
 
         <div className="why-canvasly">
-          <h2>Why Choose CanvasLy?</h2>
+          <h2 className="subtitle">Why Choose CanvasLy?</h2>
           <ul className="selling-points">
             <li>
               Effortlessly manage upcoming assignments, quizzes, projects, and
@@ -29,7 +27,7 @@ const HomePage = () => {
         </div>
 
         <div className="how-it-works">
-          <h2>How to Get Started:</h2>
+          <h2 className="subtitle">How to Get Started:</h2>
           <ol className="steps">
             <li>Access "Canvas Calendar" in the Canvas side menu</li>
             <li>Locate "Calendar Feed" and copy the URL</li>

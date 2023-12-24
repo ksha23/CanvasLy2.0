@@ -1,6 +1,13 @@
 /* Home.css */
 
 /* General Styles */
+
+.subtitle {
+  text-align:left;
+  font-style: normal;
+  margin-bottom:0px;
+}
+
 .homepage {
   margin:30px;
   margin-top:70px;
@@ -17,13 +24,9 @@ h1 {
   color: rgb(218, 0, 0);
   font-size: 40px;
   margin-bottom:0px;
+  text-align: left;
 }
 
-.subtitle {
-  font-size: 1.2em;
-  font-style: italic;
-  margin-bottom: 20px;
-}
 
 /* Selling Points */
 .why-canvasly {
@@ -57,6 +60,8 @@ h1 {
 .steps li {
   margin-top: 10px;
 }
+
+
 
 /* Navbar (assuming you have a Navbar component) */
 /* Add your Navbar styling here */

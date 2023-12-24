@@ -6,13 +6,47 @@ import { useSelector } from "react-redux";
 import { getAssignments } from "../redux/actions/assignmentListAction";
 import { useDispatch } from "react-redux";
 import Confetti from "react-confetti";
+import { getSortedAssignments } from "../redux/selectors/assignmentListSelector";
 
 function AssignmentsPage() {
+  const getWeights = async () => {
+    const response = await fetch(`http://localhost:4000/api/v1/users/weights`, {
+      method: "get",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    return data;
+  };
+
   const [showConfetti, setShowConfetti] = useState(false);
+  const [theDueDateWeight, setTheDueDateWeight] = useState(0);
+  const [theTypeWeight, setTheTypeWeight] = useState(0);
+  const [theDifficultyWeight, setTheDifficultyWeight] = useState(0);
   const dispatch = useDispatch();
-  let events = useSelector((state) => state.assignmentsListReducer);
+  let events = useSelector((state) =>
+    getSortedAssignments(
+      state,
+      theDueDateWeight,
+      theTypeWeight,
+      theDifficultyWeight
+    )
+  );
+  // let events = useSelector((state) => state.assignmentsListReducer);
 
   useEffect(() => {
+    const setup = async () => {
+      const response = await getWeights();
+      if (response) {
+        setTheDueDateWeight(response.dueDateWeight);
+        setTheTypeWeight(response.typeWeight);
+        setTheDifficultyWeight(response.difficultyWeight);
+      }
+    };
+    setup();
+
     dispatch(getAssignments());
     const interval = setInterval(() => {
       dispatch(getAssignments()); // automatically refresh data every minute

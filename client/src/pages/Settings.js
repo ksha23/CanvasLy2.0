@@ -3,6 +3,24 @@ import Navbar from "../components/Navbar";
 import "./Settings.css";
 
 const SettingsPage = () => {
+  const getUserSimple = async () => {
+    const response = await fetch(
+      `http://localhost:4000/api/v1/users/userSimple`,
+      {
+        method: "get",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const data = await response.json();
+    setTheCalendarId(data.user.calendarId);
+    setTheDifficultyWeight(data.user.difficultyWeight);
+    setTheDueDateWeight(data.user.dueDateWeight);
+    setTheTypeWeight(data.user.typeWeight);
+  };
+
   const getCalendarData = async () => {
     const response = await fetch(
       `http://localhost:4000/api/v1/calendar/calendarData`,
@@ -34,18 +52,6 @@ const SettingsPage = () => {
     return data;
   };
 
-  const getWeights = async () => {
-    const response = await fetch(`http://localhost:4000/api/v1/users/weights`, {
-      method: "get",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
-    return data;
-  };
-
   const setWeights = async (dueDateWeight, difficultyWeight, typeWeight) => {
     const response = await fetch(`http://localhost:4000/api/v1/users/weights`, {
       method: "put",
@@ -69,12 +75,7 @@ const SettingsPage = () => {
   useEffect(() => {
     const setup = async () => {
       await getCalendarData();
-      const response = await getWeights();
-      if (response) {
-        setTheDueDateWeight(response.dueDateWeight);
-        setTheTypeWeight(response.typeWeight);
-        setTheDifficultyWeight(response.difficultyWeight);
-      }
+      await getUserSimple();
     };
     setup();
   }, []);
@@ -114,43 +115,58 @@ const SettingsPage = () => {
       <div className="container">
         <h2>Settings</h2>
         <form onSubmit={handleSubmit}>
-          <p>Choose a calendar to display events from.</p>
+          <p>
+            <strong>Choose a calendar to display events from:</strong>
+          </p>
           <select
             className="calendar-select"
             name="calendars"
             id="calendars"
+            value={calendarId}
             onChange={(e) => setTheCalendarId(e.target.value)}
           >
-            <option>Choose a Calendar</option>
+            <option value="">Choose a Calendar</option>
             {calendars.map((calendar) => (
               <option key={calendar.id} value={calendar.id}>
                 {calendar.summary}
               </option>
             ))}
           </select>
-          <p>Choose weight for due date:</p>
-          <input
-            type="number"
-            value={theDueDateWeight}
-            onChange={(e) => setTheDueDateWeight(e.target.value)}
-          />
 
-          <p>Choose weight for type:</p>
-          <input
-            type="number"
-            value={theTypeWeight}
-            onChange={(e) => setTheTypeWeight(e.target.value)}
-          />
+          <div className="input-container">
+            <div>
+              <label htmlFor="dueDateWeight">Weight for due date:</label>
+              <input
+                id="dueDateWeight"
+                type="number"
+                value={theDueDateWeight}
+                onChange={(e) => setTheDueDateWeight(e.target.value)}
+              />
+            </div>
 
-          <p>Choose weight for difficulty:</p>
-          <input
-            type="number"
-            value={theDifficultyWeight}
-            onChange={(e) => setTheDifficultyWeight(e.target.value)}
-          />
+            <div>
+              <label htmlFor="typeWeight">Weight for type:</label>
+              <input
+                id="typeWeight"
+                type="number"
+                value={theTypeWeight}
+                onChange={(e) => setTheTypeWeight(e.target.value)}
+              />
+            </div>
 
-          {error && <div style={{ color: "red" }}>{error}</div>}
-          <button type="submit">Save</button>
+            <div>
+              <label htmlFor="difficultyWeight">Weight for difficulty:</label>
+              <input
+                id="difficultyWeight"
+                type="number"
+                value={theDifficultyWeight}
+                onChange={(e) => setTheDifficultyWeight(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {error && <div className="error-message">{error}</div>}
+          <button type="submit">Save Settings</button>
         </form>
       </div>
     </div>
