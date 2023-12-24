@@ -13,4 +13,10 @@ calendarRouter.get(
   calendarController.getCalendarById
 );
 
+calendarRouter.get(
+  "/calendarData",
+  checkAuth,
+  calendarController.getCalendarData
+);
+
 module.exports = calendarRouter;

@@ -111,7 +111,7 @@ const EventComponent = ({
   let assignments = useSelector((state) => state.assignmentsListReducer);
   let assignment = assignments.find((assignment) => assignment._id === id);
   const extractedContent = extractContentInBrackets(name);
-  const displayName = extractedContent ? `${extractedContent} ` : "";
+  const displayName = extractedContent ? `${extractedContent}: ` : "";
 
   return (
     <div className={edited ? "edited-container" : "event-container"}>
@@ -119,22 +119,19 @@ const EventComponent = ({
         {" "}
         <h3 className="event-title">
           {displayName}
-          <span className="event-name">
-            {": " + name.replace(/\[.*?\]/, "")}
-          </span>
+          <span className="event-name">{name.replace(/\[.*?\]/, "")}</span>
         </h3>
       </div>
 
       <div className="event-details">
         <p className="due-date">
-          <strong>Due Date: </strong>
-          {formatDate(formattedDateTime)}{" "}
-          {`(${Math.floor(
-            (formattedDateTime - new Date()) / (1000 * 60 * 60 * 24)
-          )} days) `}
-          | <strong>Difficulty: </strong>
-          {difficulty} | <strong>Type: </strong>
-          {type}
+          <span className="due-info">
+            <strong>Due: </strong>
+            {formatDate(formattedDateTime)}{" "}
+            {`(${Math.floor(
+              (formattedDateTime - new Date()) / (1000 * 60 * 60 * 24)
+            )} days)`}
+          </span>
         </p>
         <button
           className="complete-assignment-btn"

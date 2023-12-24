@@ -51,6 +51,47 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Middleware to check if the access token is about to expire
+const refreshTokenMiddleware = async (req, res, next) => {
+  if (req.user) {
+    console.log(
+      "refresh needed?: ",
+      req.user.tokenExpiresAt < Date.now() - 60000
+    );
+  }
+
+  if (req.user && req.user.tokenExpiresAt < Date.now() - 60000) {
+    refresh.requestNewAccessToken(
+      "google",
+      req.user.refresh_token,
+      async (err, accessToken, refreshToken) => {
+        if (err) {
+          console.error(err);
+          return next(err);
+        }
+        let userForUpdate;
+        if (refreshToken) {
+          userForUpdate = {
+            accessToken,
+            refreshToken,
+            tokenExpiresAt: new Date().getTime() + 3600000, // adds 1 hour to current time
+          };
+        } else
+          userForUpdate = {
+            accessToken,
+            tokenExpiresAt: new Date().getTime() + 3600000, // adds 1 hour to current time
+          };
+        await User.findByIdAndUpdate(req.user._id, userForUpdate);
+        next();
+      }
+    );
+  } else {
+    next();
+  }
+};
+
+app.use(refreshTokenMiddleware);
+
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", usersRouter);
 app.use("/api/v1/calendar", calendarRouter);

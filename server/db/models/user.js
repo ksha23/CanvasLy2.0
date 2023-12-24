@@ -25,6 +25,9 @@ const userSchema = new Schema({
   accessToken: {
     type: String,
   },
+  tokenExpiresAt: {
+    type: Date,
+  },
   refreshToken: {
     type: String,
   },

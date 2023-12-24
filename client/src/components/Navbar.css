@@ -96,6 +96,14 @@
     background-color: #a00000;
   }
 
-
-
+.nav-link {
+    color: rgb(231, 231, 231);
+    font-size: 20px;
+    font-weight: bold;
+    text-decoration: none;
+    margin-left: 20px;
+  }
   
+  .nav-link:hover {
+    color: #ffffff;
+  }

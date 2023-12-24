@@ -8,6 +8,23 @@ import { useDispatch } from "react-redux";
 import Confetti from "react-confetti";
 
 function AssignmentsPage() {
+  // get calendar data from backend
+  const getCalendarData = async () => {
+    const response = await fetch(
+      `http://localhost:4000/api/v1/calendar/calendarData`,
+      {
+        method: "get",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const data = await response.json();
+    console.log(data);
+    return data;
+  };
+
   const setCalendarId = async (calendarId) => {
     const response = await fetch(
       `http://localhost:4000/api/v1/users/setCalendarId`,
@@ -21,13 +38,21 @@ function AssignmentsPage() {
       }
     );
     const data = await response.json();
+    window.location.reload(); // Refresh the page after updates
   };
 
   const [showConfetti, setShowConfetti] = useState(false);
+  const [calendars, setCalendars] = useState([]);
   const dispatch = useDispatch();
   let events = useSelector((state) => state.assignmentsListReducer);
 
   useEffect(() => {
+    const fetchCalendarData = async () => {
+      const data = await getCalendarData();
+      setCalendars(data);
+    };
+
+    fetchCalendarData();
     dispatch(getAssignments());
     const interval = setInterval(() => {
       dispatch(getAssignments()); // automatically refresh data every minute
@@ -114,18 +139,23 @@ function AssignmentsPage() {
             <h2>Canvas Assignments:</h2>
           </section>
           <div>
-            <input
-              className="calendar-id-input"
-              type="text"
-              placeholder="Enter your Google Calendar ID"
+            <select
+              className="calendar-select"
               onChange={(e) => setTheCalendarId(e.target.value)}
-            />
-
+            >
+              <option value="">Select a calendar</option>
+              {calendars &&
+                calendars.map((calendar) => (
+                  <option key={calendar.id} value={calendar.id}>
+                    {calendar.summary}
+                  </option>
+                ))}
+            </select>
             <button
               className="calendar-id-submit-btn"
               onClick={() => setCalendarId(thecalendarId)}
             >
-              Set Calendar ID
+              Set Calendar
             </button>
           </div>
           <section className="canvas-assignments">
@@ -134,7 +164,6 @@ function AssignmentsPage() {
                 Update All
               </button>
             )}
-            {/* <button onClick={() => setUpdatedEvents([])}>Cancel Changes</button> */}
             {updatedEvents.length > 0 && (
               <p>{updatedEvents.length} assignments edited</p>
             )}

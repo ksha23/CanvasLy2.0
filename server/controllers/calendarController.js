@@ -4,6 +4,7 @@ const User = require("../db/models/user");
 const Calendar = require("../db/models/calendar");
 const Assignment = require("../db/models/assignment");
 const { DateTime } = require("luxon");
+const { google } = require("googleapis");
 
 // ----------------- HELPERS --------------------
 
@@ -137,6 +138,18 @@ const postProcess = async (data, googleId, timeZone, calendarId) => {
 
 //---------------------------------------------------
 
+// Gets all calendars from Google Calendar API
+const getCalendarData = async (req, res) => {
+  const oAuth2Client = new google.auth.OAuth2();
+  oAuth2Client.setCredentials({ access_token: req.user.accessToken });
+  const calendar = google.calendar({ version: "v3", auth: oAuth2Client });
+
+  const response = await calendar.calendarList.list();
+  if (!response) return res.status(200).json([]);
+  const calendars = response.data.items;
+  return res.status(200).json(calendars);
+};
+
 // Get events from Google Calendar API
 const getEventsFromGoogle = async (req, res) => {
   const calendarId = req.user.calendarId;
@@ -176,38 +189,38 @@ const getEvents = async (req, res) => {
       );
       return res.json(postProcessedData);
     }
-    if (response.status === 401) {
-      refresh.requestNewAccessToken(
-        "google",
-        req.user.refreshToken,
-        async function (err, accessToken, refreshToken) {
-          let userForUpdate;
-          if (refreshToken) {
-            userForUpdate = {
-              accessToken,
-              refreshToken,
-            };
-          } else
-            userForUpdate = {
-              accessToken,
-            };
-          await User.findByIdAndUpdate(req.user._id, userForUpdate);
-          const newResponse = await getEventsFromGoogle(req, res);
-          if (newResponse.status === 200) {
-            const data = await newResponse.json();
-            timeZone = data.timeZone;
-            const postProcessedData = await postProcess(
-              data.items,
-              req.user.googleId,
-              timeZone,
-              req.user.calendarId
-            );
-            return res.json(postProcessedData);
-          }
-          return res.status(response.status).json(response.message);
-        }
-      );
-    }
+    // if (response.status === 401) {
+    //   refresh.requestNewAccessToken(
+    //     "google",
+    //     req.user.refreshToken,
+    //     async function (err, accessToken, refreshToken) {
+    //       let userForUpdate;
+    //       if (refreshToken) {
+    //         userForUpdate = {
+    //           accessToken,
+    //           refreshToken,
+    //         };
+    //       } else
+    //         userForUpdate = {
+    //           accessToken,
+    //         };
+    //       await User.findByIdAndUpdate(req.user._id, userForUpdate);
+    //       const newResponse = await getEventsFromGoogle(req, res);
+    //       if (newResponse.status === 200) {
+    //         const data = await newResponse.json();
+    //         timeZone = data.timeZone;
+    //         const postProcessedData = await postProcess(
+    //           data.items,
+    //           req.user.googleId,
+    //           timeZone,
+    //           req.user.calendarId
+    //         );
+    //         return res.json(postProcessedData);
+    //       }
+    //       return res.status(response.status).json(response.message);
+    //     }
+    //   );
+    // }
   } catch (error) {
     console.error(error);
     return res.status(400).json([]);
@@ -232,4 +245,5 @@ const getCalendarById = async (req, res) => {
 module.exports = {
   getEvents,
   getCalendarById,
+  getCalendarData,
 };

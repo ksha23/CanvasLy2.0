@@ -34,6 +34,7 @@ const strategy = new GoogleStrategy(
         photo,
         googleName,
         googleId,
+        tokenExpiresAt: new Date().getTime() + 3600000, // adds 1 hour to current time
       };
     } else {
       userForUpdate = {
@@ -41,6 +42,7 @@ const strategy = new GoogleStrategy(
         photo,
         googleName,
         googleId,
+        tokenExpiresAt: new Date().getTime() + 3600000, // adds 1 hour to current time
       };
     }
 

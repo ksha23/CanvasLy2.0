@@ -36,7 +36,7 @@ const HomePage = () => {
             <li>Go to CanvasLy and click "Sign In with Google"</li>
             <li>You're Done!</li>
           </ol>
-          <Youtube videoId="5tayaNGT-F4" />
+          {/* <Youtube videoId="5tayaNGT-F4" /> */}
         </div>
       </div>
     </div>

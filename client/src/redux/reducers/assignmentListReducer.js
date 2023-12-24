@@ -3,6 +3,7 @@ import {
   SET_ASSIGNMENTS_LIST,
   UPDATE_ASSIGNMENT_DIFFICULTY,
   UPDATE_ASSIGNMENT_TYPE,
+  RESET,
 } from "../constant";
 import { COMPLETE_ASSIGNMENT } from "../constant";
 
@@ -111,6 +112,8 @@ function customSort(a, b) {
 
 export const assignmentsListReducer = (data = [], action) => {
   switch (action.type) {
+    case RESET:
+      return [];
     case SET_ASSIGNMENTS_LIST:
       return [...action.data].sort(customSort2);
     case COMPLETE_ASSIGNMENT:

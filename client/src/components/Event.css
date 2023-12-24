@@ -38,10 +38,14 @@ button {
 }
 
 select {
-  padding: 8px;
+  width: 120px;
+  height: 35px;
+  margin:0px;
+  padding: 6px;
   border-color: rgb(170, 170, 170);
   border-radius: 5px;
   margin-right: 10px;
+  font-size:14px;
 }
 
 /* Adjust styles for the update button */
@@ -65,6 +69,8 @@ button[type="submit"]:hover {
 }
 
 .complete-assignment-btn {
+  margin:0px;
+  margin-right: 10px;
   background-color: #008f21;
   color: white;
 }
@@ -89,7 +95,9 @@ button[type="submit"]:hover {
 }
 
 .add-reminder-input {
-  padding: 8px;
+  width: 200px;
+  height: 32px;
+  padding-left: 10px;
   margin-right: 10px;
   border-radius: 5px;
   border-width: 1px;
@@ -118,4 +126,8 @@ ul {
 .reminder-label{
   margin-top:15px;
   margin-bottom: 10px;
+}
+
+.due-info {
+  margin-right: 20px; /* Adjust the spacing as needed */
 }
