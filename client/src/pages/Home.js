@@ -9,34 +9,42 @@ const HomePage = () => {
       <Navbar />
       <div className="main-content">
         <h1>Welcome to CanvasLy</h1>
-        <p>Empowering Students to Prioritize Assignments Efficiently</p>
+        <p className="subtitle">
+          Empowering Students to Master Their Academic Journey
+        </p>
 
         <div className="why-canvasly">
-          <h2>Why CanvasLy?</h2>
-          <ul>
-            <li>Efficiency in assignment management</li>
-            <li>Customization for individual study styles</li>
-            <li>Deadline management</li>
-            <li>User-friendly interface</li>
+          <h2>Why Choose CanvasLy?</h2>
+          <ul className="selling-points">
+            <li>
+              Effortlessly manage upcoming assignments, quizzes, projects, and
+              exams
+            </li>
+            <li>
+              Personalize prioritization of assignments based on due date,
+              difficulty, and type
+            </li>
+            <li>Never miss another assignment again!</li>
           </ul>
         </div>
 
         <div className="how-it-works">
           <h2>How to Get Started:</h2>
-          <ol>
-            <li>Go to "Canvas Calendar" in the side menu of Canvas</li>
-            <li>Scroll down all the way to "Calendar Feed"</li>
-            <li>Copy the URL</li>
-            <li>Go to Google Calendar</li>
+          <ol className="steps">
+            <li>Access "Canvas Calendar" in the Canvas side menu</li>
+            <li>Locate "Calendar Feed" and copy the URL</li>
             <li>
-              Click the + button next to "Other Calendars" and select "From URL"
+              Open Google Calendar and select "+ Other Calendars" then "From
+              URL"
             </li>
             <li>Paste the URL and click "Add Calendar"</li>
-            <li>Make sure your calendar's name has "(Canvas)" in it</li>
-            <li>Go to CanvasLy and click "Sign In with Google"</li>
-            <li>You're Done!</li>
+            <li>Sign in to CanvasLy using your Google account</li>
+            <li>Choose the imported Canvas calendar to display assignments</li>
+            <li>You're all set!</li>
           </ol>
-          {/* <Youtube videoId="5tayaNGT-F4" /> */}
+          <br></br>
+
+          <Youtube videoId="5tayaNGT-F4" />
         </div>
       </div>
     </div>

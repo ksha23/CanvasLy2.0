@@ -1,43 +1,65 @@
 /* Home.css */
 
-/* Styles for main content */
+/* General Styles */
 .homepage {
-    font-family: Arial, sans-serif;
-    margin-top: 80px;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .main-content {
-    text-align: center;
-    padding: 20px;
-  }
-  
-  /* Styles for sections */
-  h1 {
-    font-size: 3em;
-  }
-  
-  p {
-    font-size: 1.2em;
-    color: #555;
-    margin-bottom: 20px;
-  }
-  
-  .why-canvasly,
-  .how-it-works {
-    margin-bottom: 30px;
-  }
-  
-  h2 {
-    font-size: 2em;
-    margin-bottom: 10px;
-  }
-  
-  ul,
-  ol {
-    text-align: left;
-    margin-left: 40px;
-  }
+  margin:30px;
+  margin-top:70px;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+.main-content {
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1 {
+  color: rgb(218, 0, 0);
+  font-size: 40px;
+  margin-bottom:0px;
+}
+
+.subtitle {
+  font-size: 1.2em;
+  font-style: italic;
+  margin-bottom: 20px;
+}
+
+/* Selling Points */
+.why-canvasly {
+  margin-bottom: 20px;
+}
+
+.selling-points {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.selling-points li {
+  margin-top: 10px;
+}
+
+.selling-points li:before {
+  content: "✓ ";
+  color: #898989;
+}
+
+/* How It Works */
+.how-it-works {
+  border-top: 2px solid #cc0000;
+}
+
+.steps {
+  list-style-type: decimal;
+  padding-left: 20px;
+}
+
+.steps li {
+  margin-top: 10px;
+}
+
+/* Navbar (assuming you have a Navbar component) */
+/* Add your Navbar styling here */
+
+/* Youtube Video (assuming you have a Youtube component) */
+/* Add your Youtube styling here */

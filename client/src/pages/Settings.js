@@ -31,92 +31,80 @@ const SettingsPage = () => {
       }
     );
     const data = await response.json();
-    window.location.reload(); // Refresh the page after updates
+    return data;
   };
 
   const getWeights = async () => {
-    const response = await fetch(
-      `http://localhost:4000/api/v1/users/getWeights`,
-      {
-        method: "get",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await fetch(`http://localhost:4000/api/v1/users/weights`, {
+      method: "get",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     const data = await response.json();
+    return data;
   };
 
-  const setDueDateWeight = async (dueDateWeight) => {
-    const response = await fetch(
-      `http://localhost:4000/api/v1/users/setDueDateWeight`,
-      {
-        method: "put",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ dueDateWeight }),
-      }
-    );
+  const setWeights = async (dueDateWeight, difficultyWeight, typeWeight) => {
+    const response = await fetch(`http://localhost:4000/api/v1/users/weights`, {
+      method: "put",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ dueDateWeight, difficultyWeight, typeWeight }),
+    });
     const data = await response.json();
-    window.location.reload(); // Refresh the page after updates
-  };
-
-  const setTypeWeight = async (typeWeight) => {
-    const response = await fetch(
-      `http://localhost:4000/api/v1/users/setTypeWeight`,
-      {
-        method: "put",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ typeWeight }),
-      }
-    );
-    const data = await response.json();
-    window.location.reload(); // Refresh the page after updates
-  };
-
-  const setDifficultyWeight = async (difficultyWeight) => {
-    const response = await fetch(
-      `http://localhost:4000/api/v1/users/setDifficultyWeight`,
-      {
-        method: "put",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ difficultyWeight }),
-      }
-    );
-    const data = await response.json();
-    window.location.reload(); // Refresh the page after updates
+    return data;
   };
 
   const [calendars, setCalendars] = useState([]);
-  const [dueDateWeight, setTheDueDateWeight] = useState(0);
-  const [typeWeight, setTheTypeWeight] = useState(0);
-  const [difficultyWeight, setTheDifficultyWeight] = useState(0);
+  const [theDueDateWeight, setTheDueDateWeight] = useState(0);
+  const [theTypeWeight, setTheTypeWeight] = useState(0);
+  const [theDifficultyWeight, setTheDifficultyWeight] = useState(0);
   const [error, setError] = useState("");
+  const [calendarId, setTheCalendarId] = useState("");
 
   useEffect(() => {
-    getCalendarData();
+    const setup = async () => {
+      await getCalendarData();
+      const response = await getWeights();
+      if (response) {
+        setTheDueDateWeight(response.dueDateWeight);
+        setTheTypeWeight(response.typeWeight);
+        setTheDifficultyWeight(response.difficultyWeight);
+      }
+    };
+    setup();
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const dueDateWeight = parseInt(theDueDateWeight);
+    const typeWeight = parseInt(theTypeWeight);
+    const difficultyWeight = parseInt(theDifficultyWeight);
+
     const totalWeights = dueDateWeight + typeWeight + difficultyWeight;
     if (totalWeights !== 10) {
-      setError("Weights should add up to 10.");
+      setError("Weights should add up to 10");
     } else {
       setError("");
       // Process the weights, possibly send them to the server
-      console.log("Due Date Weight:", dueDateWeight);
-      console.log("Type Weight:", typeWeight);
-      console.log("Difficulty Weight:", difficultyWeight);
+      const response = await setWeights(
+        dueDateWeight,
+        difficultyWeight,
+        typeWeight
+      );
+
+      // Process the calendar ID, possibly send it to the server
+      const response2 = await setCalendarId(calendarId);
+      if (
+        response.message === "Weights updated" &&
+        response2.message === "Calendar ID updated"
+      )
+        window.location.reload(); // Refresh the page after updates
     }
   };
 
@@ -125,38 +113,40 @@ const SettingsPage = () => {
       <Navbar />
       <div className="container">
         <h2>Settings</h2>
-        <p>Choose a calendar to display events from.</p>
-        <select
-          className="calendar-select"
-          name="calendars"
-          id="calendars"
-          onChange={console.log("hello")}
-        >
-          <option>Choose a Calendar</option>
-          {calendars.map((calendar) => (
-            <option value={calendar.id}>{calendar.summary}</option>
-          ))}
-        </select>
         <form onSubmit={handleSubmit}>
+          <p>Choose a calendar to display events from.</p>
+          <select
+            className="calendar-select"
+            name="calendars"
+            id="calendars"
+            onChange={(e) => setTheCalendarId(e.target.value)}
+          >
+            <option>Choose a Calendar</option>
+            {calendars.map((calendar) => (
+              <option key={calendar.id} value={calendar.id}>
+                {calendar.summary}
+              </option>
+            ))}
+          </select>
           <p>Choose weight for due date:</p>
           <input
             type="number"
-            value={dueDateWeight}
-            onChange={(e) => setDueDateWeight(parseInt(e.target.value) || 0)}
+            value={theDueDateWeight}
+            onChange={(e) => setTheDueDateWeight(e.target.value)}
           />
 
           <p>Choose weight for type:</p>
           <input
             type="number"
-            value={typeWeight}
-            onChange={(e) => setTypeWeight(parseInt(e.target.value) || 0)}
+            value={theTypeWeight}
+            onChange={(e) => setTheTypeWeight(e.target.value)}
           />
 
           <p>Choose weight for difficulty:</p>
           <input
             type="number"
-            value={difficultyWeight}
-            onChange={(e) => setDifficultyWeight(parseInt(e.target.value) || 0)}
+            value={theDifficultyWeight}
+            onChange={(e) => setTheDifficultyWeight(e.target.value)}
           />
 
           {error && <div style={{ color: "red" }}>{error}</div>}

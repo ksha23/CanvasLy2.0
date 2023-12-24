@@ -34,6 +34,15 @@ const userSchema = new Schema({
   calendarId: {
     type: String,
   },
+  dueDateWeight: {
+    type: Number,
+  },
+  difficultyWeight: {
+    type: Number,
+  },
+  typeWeight: {
+    type: Number,
+  },
 });
 
 module.exports = model("User", userSchema);

@@ -8,6 +8,8 @@ const logger = require("morgan");
 const cors = require("cors");
 const { connect } = require("mongoose");
 const passport = require("passport");
+const refresh = require("passport-oauth2-refresh");
+const User = require("./db/models/user");
 
 const authRouter = require("./routes/auth");
 const calendarRouter = require("./routes/calendarRouter");
@@ -53,36 +55,47 @@ app.use(passport.session());
 
 // Middleware to check if the access token is about to expire
 const refreshTokenMiddleware = async (req, res, next) => {
-  if (req.user) {
-    console.log(
-      "refresh needed?: ",
-      req.user.tokenExpiresAt < Date.now() - 60000
-    );
-  }
+  const tokenExpirationBuffer = 60000; // 1 minute buffer for token expiration
 
-  if (req.user && req.user.tokenExpiresAt < Date.now() - 60000) {
+  if (
+    req.user.tokenExpiresAt &&
+    new Date(req.user.tokenExpiresAt) - tokenExpirationBuffer < Date.now()
+  ) {
+    console.log("Refreshing token...");
     refresh.requestNewAccessToken(
       "google",
-      req.user.refresh_token,
+      req.user.refreshToken,
       async (err, accessToken, refreshToken) => {
         if (err) {
-          console.error(err);
+          console.error("Error refreshing token:", err);
           return next(err);
         }
-        let userForUpdate;
+
+        if (!accessToken) {
+          console.error("Access token not received after refresh.");
+          // Handle this case, possibly by forcing reauthorization or another approach.
+          return next(new Error("Failed to obtain a new access token."));
+        }
+
+        let userForUpdate = {
+          accessToken,
+          tokenExpiresAt: new Date().getTime() + 3600000, // adds 1 hour to current time
+        };
+
         if (refreshToken) {
-          userForUpdate = {
-            accessToken,
-            refreshToken,
-            tokenExpiresAt: new Date().getTime() + 3600000, // adds 1 hour to current time
-          };
-        } else
-          userForUpdate = {
-            accessToken,
-            tokenExpiresAt: new Date().getTime() + 3600000, // adds 1 hour to current time
-          };
-        await User.findByIdAndUpdate(req.user._id, userForUpdate);
-        next();
+          userForUpdate.refreshToken = refreshToken;
+        }
+
+        try {
+          await User.findByIdAndUpdate(req.user._id, userForUpdate);
+          req.user.accessToken = accessToken; // Update the access token in the user object immediately
+          req.user.tokenExpiresAt = userForUpdate.tokenExpiresAt; // Update the token expiration time in the user object immediately
+          console.log("Token refreshed successfully.");
+          next();
+        } catch (updateErr) {
+          console.error("Error updating user:", updateErr);
+          next(updateErr);
+        }
       }
     );
   } else {
@@ -91,7 +104,6 @@ const refreshTokenMiddleware = async (req, res, next) => {
 };
 
 app.use(refreshTokenMiddleware);
-
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", usersRouter);
 app.use("/api/v1/calendar", calendarRouter);
