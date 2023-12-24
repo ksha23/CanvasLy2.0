@@ -10,6 +10,7 @@ const { connect } = require("mongoose");
 const passport = require("passport");
 const refresh = require("passport-oauth2-refresh");
 const User = require("./db/models/user");
+const path = require("path");
 
 const authRouter = require("./routes/auth");
 const calendarRouter = require("./routes/calendarRouter");
@@ -114,6 +115,8 @@ app.use("/api/v1/assignments", assignmentRouter);
 const PORT = process.env.PORT ?? 4000;
 // const root = require("path").join(__dirname, "../", "client", "build");
 // app.use(express.static(root));
+
+app.use(express.static(path.join(__dirname + "/../client/build")));
 // app.get("*", (req, res) => {
 //   res.sendFile("index.html", { root });
 // });

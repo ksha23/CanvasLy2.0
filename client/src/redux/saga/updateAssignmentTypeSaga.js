@@ -1,8 +1,9 @@
 import { takeEvery } from "redux-saga/effects";
 import { UPDATE_ASSIGNMENT_TYPE } from "../constant";
+import { API_URL } from "../../Endpoints";
 
 function* updateAssignmentTypeWorker(action) {
-  yield fetch(`http://localhost:4000/api/v1/assignments/type/${action.id}`, {
+  yield fetch(`${API_URL}/api/v1/assignments/type/${action.id}`, {
     method: "put",
     headers: {
       "Content-Type": "application/json",

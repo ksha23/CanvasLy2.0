@@ -7,10 +7,11 @@ import { getAssignments } from "../redux/actions/assignmentListAction";
 import { useDispatch } from "react-redux";
 import Confetti from "react-confetti";
 import { getSortedAssignments } from "../redux/selectors/assignmentListSelector";
+import { API_URL } from "../Endpoints";
 
 function AssignmentsPage() {
   const getWeights = async () => {
-    const response = await fetch(`http://localhost:4000/api/v1/users/weights`, {
+    const response = await fetch(`${API_URL}/api/v1/users/weights`, {
       method: "get",
       credentials: "include",
       headers: {
@@ -106,7 +107,7 @@ function AssignmentsPage() {
   // Update an assignment by ID with new difficulty and type
   const updateAssignment = async (id, difficulty, type) => {
     const response = await fetch(
-      `http://localhost:4000/api/v1/assignments/typeAndDifficulty/${id}`,
+      `${API_URL}/api/v1/assignments/typeAndDifficulty/${id}`,
       {
         method: "put",
         credentials: "include",

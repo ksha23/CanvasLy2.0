@@ -2,15 +2,17 @@ import React from "react";
 import "./Navbar.css";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { RESET } from "../redux/constant";
+import { API_URL } from "../Endpoints";
 
 const Navbar = () => {
   const [userData, setUserData] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,12 +21,16 @@ const Navbar = () => {
     fetchData();
   }, []);
 
+  const isActiveLink = (pathname) => {
+    return location.pathname === pathname ? "active-link" : "nav-link";
+  };
+
   async function auth() {
-    window.open("http://localhost:4000/api/v1/auth/google", "_self");
+    window.open(API_URL + "/api/v1/auth/google", "_self");
   }
 
   async function logout() {
-    const response = await fetch("http://localhost:4000/api/v1/auth/logout", {
+    const response = await fetch(API_URL + "/api/v1/auth/logout", {
       method: "get",
       credentials: "include",
     });
@@ -39,13 +45,10 @@ const Navbar = () => {
   }
 
   async function fetchUserData() {
-    const response = await fetch(
-      "http://localhost:4000/api/v1/users/userSimple",
-      {
-        method: "get",
-        credentials: "include",
-      }
-    );
+    const response = await fetch(API_URL + "/api/v1/users/userSimple", {
+      method: "get",
+      credentials: "include",
+    });
 
     const data = await response.json();
     if (data.user === null) {
@@ -65,14 +68,14 @@ const Navbar = () => {
           src={process.env.PUBLIC_URL + "/canvasly.png"}
           alt="Canvasly Logo"
         />
-        <Link to="/" className="nav-link">
-          <strong>Home</strong>
+        <Link to="/" className={isActiveLink("/")}>
+          Home
         </Link>
-        <Link to="/assignments" className="nav-link">
-          <strong>Assignments</strong>
+        <Link to="/assignments" className={isActiveLink("/assignments")}>
+          Assignments
         </Link>
-        <Link to="/settings" className="nav-link">
-          <strong>Settings</strong>
+        <Link to="/settings" className={isActiveLink("/settings")}>
+          Settings
         </Link>
       </div>
       <div className={isLoggedIn ? "right-section" : "right-section-login"}>

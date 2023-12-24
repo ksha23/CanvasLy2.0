@@ -176,7 +176,7 @@ const EventComponent = ({
           className="add-reminder-btn"
           onClick={() => addReminder(id, reminder)}
         >
-          Add Reminder
+          + Reminder
         </button>
         {edited && (
           <button

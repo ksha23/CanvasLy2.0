@@ -1,11 +1,12 @@
 import { takeEvery } from "redux-saga/effects";
 import { COMPLETE_ASSIGNMENT } from "../constant";
+import { API_URL } from "../../Endpoints";
 
 // worker saga
 function* completeAssignment(action) {
   // make api call to update assignment
   const response = yield fetch(
-    `http://localhost:4000/api/v1/assignments/complete/${action.id}`,
+    `${API_URL}/api/v1/assignments/complete/${action.id}`,
     {
       method: "put",
       headers: {

@@ -1,18 +1,16 @@
 import { takeEvery } from "redux-saga/effects";
 import { ADD_ASSIGNMENT_REMINDER } from "../constant";
+import { API_URL } from "../../Endpoints";
 
 function* addAssginmentReminderWorker(action) {
-  yield fetch(
-    `http://localhost:4000/api/v1/assignments/reminder/${action.id}`,
-    {
-      method: "put",
-      headers: {
-        "Content-Type": "application/json",
-      },
+  yield fetch(`${API_URL}/api/v1/assignments/reminder/${action.id}`, {
+    method: "put",
+    headers: {
+      "Content-Type": "application/json",
+    },
 
-      body: JSON.stringify({ id: action.id, reminder: action.reminder }),
-    }
-  );
+    body: JSON.stringify({ id: action.id, reminder: action.reminder }),
+  });
 }
 
 function* addAssginmentReminderSaga() {

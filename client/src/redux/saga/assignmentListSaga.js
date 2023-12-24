@@ -1,9 +1,10 @@
 import { put, take, takeEvery } from "redux-saga/effects";
 import { GET_ASSIGNMENTS } from "../constant";
+import { API_URL } from "../../Endpoints";
 
 // worker saga
 function* getAssignmentsWorker() {
-  let data = yield fetch("http://localhost:4000/api/v1/calendar/events", {
+  let data = yield fetch(API_URL + "/api/v1/calendar/events", {
     method: "get",
     credentials: "include",
   });
