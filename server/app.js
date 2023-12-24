@@ -58,6 +58,7 @@ const refreshTokenMiddleware = async (req, res, next) => {
   const tokenExpirationBuffer = 60000; // 1 minute buffer for token expiration
 
   if (
+    req.user &&
     req.user.tokenExpiresAt &&
     new Date(req.user.tokenExpiresAt) - tokenExpirationBuffer < Date.now()
   ) {
@@ -90,6 +91,7 @@ const refreshTokenMiddleware = async (req, res, next) => {
           await User.findByIdAndUpdate(req.user._id, userForUpdate);
           req.user.accessToken = accessToken; // Update the access token in the user object immediately
           req.user.tokenExpiresAt = userForUpdate.tokenExpiresAt; // Update the token expiration time in the user object immediately
+          req.user.refreshToken = refreshToken || req.user.refreshToken; // Update the refresh token in the user object immediately
           console.log("Token refreshed successfully.");
           next();
         } catch (updateErr) {
